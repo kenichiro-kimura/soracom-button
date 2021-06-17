@@ -54,6 +54,13 @@ const template = Menu.buildFromTemplate([
 // メニューを適用する
 Menu.setApplicationMenu(template);
 
+// 設定を読み込む
+const Preference = require('electron-store');
+const preference = new Preference();
+
+let endpoint = preference.get("endpoint","http://uni.soracom.io")
+preference.set("endpoint",endpoint);
+
 // Electronの初期化が完了し、ブラウザーウィンドーを開く準備ができたら実行
 app.on('ready', function() {
   // 新しいブラウザーウィンドーを生成
@@ -73,9 +80,9 @@ app.on('ready', function() {
     },
   });
  
-    // 今のディレクトリーで「 index.html」をロード
+  // 今のディレクトリーで「 index.html」をロード
   mainWindow.loadURL('file://' + __dirname + '/index.html');
-  // mainWindow.openDevTools(); 
+
   // ウィンドーが閉じられたら呼び出される  (アプリケーション終了)
   mainWindow.on('closed', function() {
     // ウィンドーオブジェクトの参照を削除
@@ -86,3 +93,7 @@ app.on('ready', function() {
 const setSticker = (label) => {
   mainWindow.webContents.send("ipc-set-sticker",label);
 }
+
+ipcMain.handle("ipc-get-endpoint", () => {
+  return endpoint;
+});

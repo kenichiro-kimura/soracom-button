@@ -1,5 +1,6 @@
 window.onload = () => {
     initButton("button","comment","led");
+    window.api.getEndpoint();
 }
   
 window.api.setSticker((label) => {

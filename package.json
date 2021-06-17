@@ -5,6 +5,7 @@
   "main": "src/main.js",
   "dependencies": {
     "axios": "^0.21.1",
+    "electron-store": "^8.0.0",
     "path": "^0.12.7"
   },
   "devDependencies": {
@@ -18,22 +19,22 @@
   },
   "author": "",
   "license": "ISC",
-  "build":{
+  "build": {
     "appId": "jp.soracom-ug.app.button",
     "files": [
       "package.json",
       "package-lock.json",
       "src"
     ],
-    "mac":{
+    "mac": {
       "target": "dmg",
       "icon": "img/icon.png"
     },
-    "win":{
+    "win": {
       "target": "nsis",
       "icon": "img/icon.png"
     },
-    "nsis":{
+    "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
     }

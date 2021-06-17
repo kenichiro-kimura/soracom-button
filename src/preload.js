@@ -1,7 +1,6 @@
 const { contextBridge, ipcRenderer} = require("electron");
 const axios = require('axios');
-const url = "https://nywf4yd8ll.execute-api.ap-northeast-1.amazonaws.com/data_dump";
-//const url = "http://uni.soracom.io";
+let url;
 
 contextBridge.exposeInMainWorld(
     "api", {
@@ -11,6 +10,10 @@ contextBridge.exposeInMainWorld(
         },
         setSticker: (listener) => {
           ipcRenderer.on("ipc-set-sticker", (event, arg) => listener(arg));
-        }
+        },
+        getEndpoint: () =>
+          ipcRenderer.invoke("ipc-get-endpoint")
+            .then((result) => {url = result})
+            .catch(err => console.log(err))
     }
 );
