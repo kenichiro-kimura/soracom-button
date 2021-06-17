@@ -1,0 +1,106 @@
+#main {
+    position: relative;
+    border-radius: 10px;
+    border: solid 2px black;
+    padding: 3px;
+    width: 1170px;
+    height: 415px;
+}
+
+#sticker {
+    border-radius: 10px;
+    visibility: hidden;
+}
+#button {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    position: absolute;
+    top: 113px;
+    left: 90px;
+    border: double 2px black;
+}
+
+#button.active {
+    background: #f00;
+}
+
+#led {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    position: absolute;
+    top: 202px;
+    left: 421px;
+    border: double 2px black;
+    animation-direction: alternate;
+    animation-fill-mode: forwards;
+    animation-play-state: running;
+}
+
+#led.sending {
+    animation-name: blink;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes blink {
+    0% {
+        background: orange;
+    }
+    25% {
+        background: white;
+    }
+    50% {
+        background: white;
+    }
+    75% {
+        background: white;
+    }
+    100% {
+        background: white;
+    }
+}
+
+#led.sent {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    animation-name: sent;
+    animation-duration: 3s;
+}
+
+@keyframes sent {
+    0% {
+        background: green;
+    }
+    90% {
+        background: green;
+    }
+    100% {
+        background: white;
+    }
+}
+
+#led.senterror {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    animation-name: error;
+    animation-duration: 6s;
+}
+
+@keyframes error {
+    0% {
+        background: red;
+    }
+    90% {
+        background: red;
+    }
+    100% {
+        background: white;
+    }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "soracom-button",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "electron": "^13.1.2",
+    "electron-builder": "^22.11.7"
+  },
+  "scripts": {
+    "start": "electron ./src",
+    "build-mac": "electron-builder --mac --x64 src",
+    "build-win": "electron-builder --win --x64 src"
+  },
+  "author": "",
+  "license": "ISC",
+  "build":{
+    "appId": "jp.soracom-ug.app.button",
+    "files": [
+      "package.json",
+      "package-lock.json",
+      "src"
+    ],
+    "mac":{
+      "target": "dmg",
+      "icon": "img/icon.png"
+    },
+    "win":{
+      "target": "nsis",
+      "icon": "img/icon.png"
+    },
+    "nsis":{
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}
