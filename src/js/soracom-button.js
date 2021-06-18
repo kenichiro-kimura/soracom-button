@@ -48,11 +48,13 @@ function dataSend() {
                     "batteryLevel": 1
                 }
             ).then(() => {
-                ledElement.className = "sent"
+                ledElement.className = "sent";
+                result = "(成功)";
             }).catch(() => {
                 ledElement.className = "senterror"
+                result = "(失敗)";
             }).finally(() => {
-                commentElement.textContent = "送信完了";
+                commentElement.textContent = "送信完了" + result;
                 nowSending = 0;
             });
         }

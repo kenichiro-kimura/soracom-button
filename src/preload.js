@@ -1,11 +1,11 @@
 const { contextBridge, ipcRenderer} = require("electron");
 const axios = require('axios');
-let url;
+let endpoint;
 
 contextBridge.exposeInMainWorld(
     "api", {
         send: async(arg) => {
-          let rt = await axios.post(url,arg);
+          let rt = await axios.post(endpoint,arg);
           return(rt);
         },
         setSticker: (listener) => {
@@ -13,7 +13,7 @@ contextBridge.exposeInMainWorld(
         },
         getEndpoint: () =>
           ipcRenderer.invoke("ipc-get-endpoint")
-            .then((result) => {url = result})
+            .then((result) => {endpoint = result})
             .catch(err => console.log(err))
     }
 );
