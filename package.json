@@ -14,8 +14,9 @@
   },
   "scripts": {
     "start": "electron ./src",
-    "build-mac": "electron-builder --mac --x64 src",
-    "build-win": "electron-builder --win --x64 src"
+    "build-mac": "electron-builder --mac --x64",
+    "build-win64": "electron-builder --win --x64",
+    "build-win32": "electron-builder --win --ia32"
   },
   "author": "",
   "license": "ISC",
