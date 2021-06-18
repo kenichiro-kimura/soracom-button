@@ -39,7 +39,7 @@ Reference:
 
 When you start the software, the main window will open as shown below.
 
-! [](img/app-image.png)
+![](img/app-image.png)
 
 ### Quit
 Select [Exit] from [File] menu.
@@ -62,7 +62,7 @@ From the [SORACOM User Console](https://console.soracom.io), go to [Data Collect
 
 Select [View] > [UG Version] to change the button to the version with the SORACOM UG sticker on it. The behavior will not change.
 
-! [](img/app-image-ug.png)
+![](img/app-image-ug.png)
 
 ### Check the data without sending it to the SORACOM platform
 
