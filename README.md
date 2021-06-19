@@ -60,7 +60,9 @@ From the [SORACOM User Console](https://console.soracom.io), go to [Data Collect
 
 ### Change the look and feel.
 
-Select [View] > [UG Version] to change the button to the version with the SORACOM UG sticker on it. The behavior will not change.
+Select [View] > [Style] > [UG Version] to change the button to the version with the SORACOM UG sticker on it. The behavior will not change.
+
+Select [View] > [Size] > [Large/Middle/Smaill] to change the size of button.
 
 ![](img/app-image-ug.png)
 
