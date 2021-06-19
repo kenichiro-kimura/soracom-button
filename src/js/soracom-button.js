@@ -7,6 +7,8 @@ let clickNum = 0;
 let buttonElement;
 let commentElement;
 let ledElement;
+// eslint-disable-next-line prefer-const
+let size = 'large';
 
 const ua = navigator.userAgent.toLowerCase();
 const isSP = /iphone|ipod|ipad|android/.test(ua);
@@ -34,7 +36,7 @@ function dataSend () {
   let sendingCounter = 0;
   clearInterval(waitTimer);
   commentElement.textContent += '送信中';
-  ledElement.className = 'sending';
+  changeLedClass('sending');
   sendingTimer = setInterval(() => {
     commentElement.textContent += '.';
     sendingCounter++;
@@ -48,10 +50,10 @@ function dataSend () {
           batteryLevel: 1
         }
       ).then(() => {
-        ledElement.className = 'sent';
+        changeLedClass('sent');
         result = '(成功)';
       }).catch(() => {
-        ledElement.className = 'senterror';
+        changeLedClass('senterror');
         result = '(失敗)';
       }).finally(() => {
         commentElement.textContent = '送信完了' + result;
@@ -59,6 +61,10 @@ function dataSend () {
       });
     }
   }, 1000);
+}
+
+function changeLedClass (className) {
+  ledElement.className = 'led ' + size + ' ' + className;
 }
 
 // eslint-disable-next-line no-unused-vars

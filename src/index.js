@@ -1,16 +1,29 @@
+/* eslint-disable no-undef */
+let mainElement;
+let stickerElement;
+
 window.onload = () => {
-  // eslint-disable-next-line no-undef
   initButton('button', 'comment', 'led');
   window.api.getEndpoint();
+  mainElement = document.getElementById('main');
+  stickerElement = document.getElementById('sticker');
 };
 
 window.api.setSticker((label) => {
   switch (label) {
     case 'white':
-      document.getElementById('sticker').style.visibility = 'hidden';
+      stickerElement.style.visibility = 'hidden';
       break;
     case 'soracomug':
-      document.getElementById('sticker').style.visibility = 'visible';
+      stickerElement.style.visibility = 'visible';
       break;
   }
+});
+
+window.api.setWindowSize((newSize) => {
+  size = newSize;
+  stickerElement.src = 'img/soracomug-' + size + '.png';
+  buttonElement.className = 'button ' + size;
+  mainElement.className = 'main ' + size;
+  ledElement.className = 'led ' + size;
 });

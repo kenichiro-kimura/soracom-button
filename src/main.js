@@ -23,12 +23,34 @@ const template = Menu.buildFromTemplate([
     label: 'View',
     submenu: [
       {
-        label: 'しろボタン',
-        click: () => { setSticker('white'); }
+        label: 'サイズ',
+        submenu: [
+          {
+            label: '大',
+            click: () => { resize('large'); }
+          },
+          {
+            label: '中',
+            click: () => { resize('middle'); }
+          },
+          {
+            label: '小',
+            click: () => { resize('small'); }
+          }
+        ]
       },
       {
-        label: 'UGバージョン',
-        click: () => { setSticker('soracomug'); }
+        label: 'ステッカー',
+        submenu: [
+          {
+            label: 'しろボタン',
+            click: () => { setSticker('white'); }
+          },
+          {
+            label: 'UGバージョン',
+            click: () => { setSticker('soracomug'); }
+          }
+        ]
       }
     ]
   },
@@ -97,3 +119,20 @@ const setSticker = (label) => {
 ipcMain.handle('ipc-get-endpoint', () => {
   return endpoint;
 });
+
+const resize = (size) => {
+  switch (size) {
+    case 'large':
+      mainWindow.setBounds({ width: 1210, height: 700 });
+      break;
+    case 'middle':
+      mainWindow.setBounds({ width: 705, height: 350 });
+      break;
+    case 'small':
+      mainWindow.setBounds({ width: 352, height: 250 });
+      break;
+    default:
+      size = 'large';
+  }
+  mainWindow.webContents.send('ipc-set-window-size', size);
+};

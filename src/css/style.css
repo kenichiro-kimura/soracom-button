@@ -1,48 +1,109 @@
-#main {
+body { 
+    overflow-x: hidden; 
+    overflow-y: hidden; 
+} 
+    
+div.main {
     position: relative;
     border-radius: 10px;
     border: solid 2px black;
     padding: 3px;
+}
+
+div.main.large {
     width: 1170px;
     height: 415px;
+}
+
+div.main.middle {
+    width: 585px;
+    height: 207px;
+}
+
+div.main.small {
+    width: 292px;
+    height: 103px;
 }
 
 #sticker {
     border-radius: 10px;
     visibility: hidden;
 }
-#button {
-    width: 200px;
-    height: 200px;
+
+div.button {
     border-radius: 50%;
     position: absolute;
-    top: 113px;
-    left: 90px;
     border: double 2px black;
 }
 
-#button.active {
-    background: #f00;
+div.button.large {
+    width: 200px;
+    height: 200px;
+    top: 113px;
+    left: 90px;
 }
 
-#led {
-    width: 20px;
-    height: 20px;
+div.button.middle {
+    width: 100px;
+    height: 100px;
+    top: 56px;
+    left: 45px;
+}
+
+div.button.small {
+    width: 50px;
+    height: 50px;
+    top: 28px;
+    left: 22px;
+}
+
+div.led {
     border-radius: 50%;
     background: white;
     position: absolute;
-    top: 202px;
-    left: 421px;
     border: double 2px black;
     animation-direction: alternate;
     animation-fill-mode: forwards;
     animation-play-state: running;
 }
 
-#led.sending {
+div.led.large {
+    width: 20px;
+    height: 20px;
+    top: 202px;
+    left: 421px;
+}
+
+div.led.middle {
+    width: 10px;
+    height: 10px;
+    top: 101px;
+    left: 210px;
+}
+
+div.led.small {
+    width: 5px;
+    height: 5px;
+    top: 50px;
+    left: 105px;
+}
+
+div.sending {
     animation-name: blink;
     animation-duration: 1s;
     animation-iteration-count: infinite;
+}
+
+div.sent {
+    background: white;
+    animation-name: sent;
+    animation-duration: 3s;
+}
+
+div.senterror {
+    background: white;
+    animation-name: error;
+    animation-duration: 6s;
 }
 
 @keyframes blink {
@@ -63,15 +124,6 @@
     }
 }
 
-#led.sent {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: white;
-    animation-name: sent;
-    animation-duration: 3s;
-}
-
 @keyframes sent {
     0% {
         background: green;
@@ -82,15 +134,6 @@
     100% {
         background: white;
     }
-}
-
-#led.senterror {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: white;
-    animation-name: error;
-    animation-duration: 6s;
 }
 
 @keyframes error {

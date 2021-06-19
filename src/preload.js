@@ -11,6 +11,9 @@ contextBridge.exposeInMainWorld(
     setSticker: (listener) => {
       ipcRenderer.on('ipc-set-sticker', (event, arg) => listener(arg));
     },
+    setWindowSize: (listener) => {
+      ipcRenderer.on('ipc-set-window-size', (event, arg) => listener(arg));
+    },
     getEndpoint: () =>
       ipcRenderer.invoke('ipc-get-endpoint')
         .then((result) => { endpoint = result; })
