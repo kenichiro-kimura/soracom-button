@@ -1,15 +1,16 @@
 window.onload = () => {
-    initButton("button","comment","led");
-    window.api.getEndpoint();
-}
-  
+  // eslint-disable-next-line no-undef
+  initButton('button', 'comment', 'led');
+  window.api.getEndpoint();
+};
+
 window.api.setSticker((label) => {
-  switch(label){
-    case "white":
-      document.getElementById("sticker").style.visibility = "hidden";
+  switch (label) {
+    case 'white':
+      document.getElementById('sticker').style.visibility = 'hidden';
       break;
-    case "soracomug":
-      document.getElementById("sticker").style.visibility = "visible";
+    case 'soracomug':
+      document.getElementById('sticker').style.visibility = 'visible';
       break;
   }
 });
