@@ -20,6 +20,12 @@ const longClickThreashold = 100;
 function dataSend () {
   let clickTypeName;
   let clickType;
+  let batteryLevel = parseInt(document.getElementById('batteryLevel').value);
+
+  if (batteryLevel !== 0 && batteryLevel !== 1 && batteryLevel !== 2 && batteryLevel !== 3) batteryLevel = 1;
+
+  const batteryLevelLabel = ['0.25', '0.5', '0.75', '1.0'][batteryLevel];
+
   if (count >= longClickThreashold) {
     clickTypeName = 'LONG';
     clickType = 3;
@@ -30,13 +36,15 @@ function dataSend () {
     clickTypeName = 'DOUBLE';
     clickType = 2;
   }
-  commentElement.textContent = clickTypeName + ' ';
+
+  commentElement.textContent = clickTypeName + '(batteryLevel:' + batteryLevelLabel + ') ';
   clickNum = 0;
   nowSending = 1;
   let sendingCounter = 0;
   clearInterval(waitTimer);
   commentElement.textContent += '送信中';
   changeLedClass('sending');
+
   sendingTimer = setInterval(() => {
     commentElement.textContent += '.';
     sendingCounter++;
@@ -47,7 +55,7 @@ function dataSend () {
         {
           clickType: clickType,
           clickTypeName: clickTypeName,
-          batteryLevel: 3
+          batteryLevel: batteryLevel
         }
       ).then(() => {
         changeLedClass('sent');

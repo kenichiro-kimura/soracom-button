@@ -38,7 +38,7 @@ const _sendUdp = (arg) => new Promise((resolve, reject) => {
   sendData[0] = 0x4d;
   sendData[1] = parseInt(arg.clickType);
   sendData[2] = parseInt(arg.batteryLevel);
-  sendData[3] = 0x50 + parseInt(arg.clickType);
+  sendData[3] = 0x4d + parseInt(arg.clickType) + parseInt(arg.batteryLevel);
   const socket = dgram.createSocket('udp4');
 
   const recvTimer = setTimeout(() => {
