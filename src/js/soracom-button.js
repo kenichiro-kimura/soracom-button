@@ -43,11 +43,11 @@ function dataSend () {
     if (sendingCounter > 6) {
       clearInterval(sendingTimer);
       let result;
-      window.api.send(
+      window.api.sendUdp(
         {
           clickType: clickType,
           clickTypeName: clickTypeName,
-          batteryLevel: 1
+          batteryLevel: 3
         }
       ).then(() => {
         changeLedClass('sent');
