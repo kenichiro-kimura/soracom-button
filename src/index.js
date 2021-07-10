@@ -5,6 +5,7 @@ let stickerElement;
 window.onload = () => {
   initButton('button', 'comment', 'led');
   window.api.getEndpoint();
+  window.api.getUdpHost();
   mainElement = document.getElementById('main');
   stickerElement = document.getElementById('sticker');
 };

@@ -82,6 +82,8 @@ const preference = new Preference();
 
 const endpoint = preference.get('endpoint', 'http://uni.soracom.io');
 preference.set('endpoint', endpoint);
+const udphost = preference.get('udphost', 'button.soracom.io');
+preference.set('udphost', udphost);
 
 // Electronの初期化が完了し、ブラウザーウィンドーを開く準備ができたら実行
 app.on('ready', function () {
@@ -118,6 +120,10 @@ const setSticker = (label) => {
 
 ipcMain.handle('ipc-get-endpoint', () => {
   return endpoint;
+});
+
+ipcMain.handle('ipc-get-udphost', () => {
+  return udphost;
 });
 
 const resize = (size) => {

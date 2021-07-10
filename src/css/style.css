@@ -6,7 +6,7 @@ body {
 div.main {
     position: relative;
     border-radius: 10px;
-    border: solid 2px black;
+    border: double 5px black;
     padding: 3px;
 }
 
