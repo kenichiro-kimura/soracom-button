@@ -54,7 +54,12 @@ const _sendUdp = (arg) => new Promise((resolve, reject) => {
   socket.on('message', (message, remote) => {
     clearInterval(recvTimer);
     socket.close();
-    resolve(message);
+    /* 戻り値の先頭が50(文字コード。数字の'2')で無い場合はデータエラー */
+    if (parseInt(message[0]) !== 50) {
+      reject(message);
+    } else {
+      resolve(message);
+    }
   });
   socket.send(sendData, 0, sendData.length, UNI_PORT, udpHost, (err, bytes) => {
     if (err) {
