@@ -1,51 +1,51 @@
 {
-    "name": "soracom-button",
-    "version": "0.3.0",
-    "description": "",
-    "main": "src/main.js",
-    "dependencies": {
-        "axios": "^0.21.4",
-        "electron-store": "^8.0.1",
-        "path": "^0.12.7"
+  "name": "soracom-button",
+  "version": "0.2.0",
+  "description": "",
+  "main": "src/main.js",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "electron-store": "^8.0.0",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "electron": "^13.1.2",
+    "electron-builder": "^22.11.7",
+    "eslint": "^7.29.0",
+    "eslint-config-semistandard": "^16.0.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-standard": "^5.0.0"
+  },
+  "scripts": {
+    "start": "electron ./src",
+    "build-mac": "electron-builder --mac --x64",
+    "build-win64": "electron-builder --win --x64",
+    "build-win32": "electron-builder --win --ia32",
+    "lint": "eslint --ext .js ./src"
+  },
+  "author": "Kenichiro Kimura <kenichiro.kimura@gmail.com>",
+  "license": "MIT",
+  "build": {
+    "appId": "jp.soracom-ug.app.button",
+    "files": [
+      "package.json",
+      "package-lock.json",
+      "src"
+    ],
+    "mac": {
+      "target": "dmg",
+      "icon": "img/icon.png"
     },
-    "devDependencies": {
-        "electron": "^15.0.0",
-        "electron-builder": "^22.11.7",
-        "eslint": "^7.32.0",
-        "eslint-config-semistandard": "^16.0.0",
-        "eslint-config-standard": "^16.0.3",
-        "eslint-plugin-import": "^2.24.2",
-        "eslint-plugin-node": "^11.1.0",
-        "eslint-plugin-promise": "^5.1.0",
-        "eslint-plugin-standard": "^5.0.0"
+    "win": {
+      "target": "nsis",
+      "icon": "img/icon.png"
     },
-    "scripts": {
-        "start": "electron ./src",
-        "build-mac": "electron-builder --mac --x64",
-        "build-win64": "electron-builder --win --x64",
-        "build-win32": "electron-builder --win --ia32",
-        "lint": "eslint --ext .js ./src"
-    },
-    "author": "Kenichiro Kimura <kenichiro.kimura@gmail.com>",
-    "license": "MIT",
-    "build": {
-        "appId": "jp.soracom-ug.app.button",
-        "files": [
-            "package.json",
-            "package-lock.json",
-            "src"
-        ],
-        "mac": {
-            "target": "dmg",
-            "icon": "img/icon.png"
-        },
-        "win": {
-            "target": "nsis",
-            "icon": "img/icon.png"
-        },
-        "nsis": {
-            "oneClick": false,
-            "allowToChangeInstallationDirectory": true
-        }
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
     }
+  }
 }
