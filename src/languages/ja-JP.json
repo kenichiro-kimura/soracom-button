@@ -1,0 +1,20 @@
+{
+    "exit": "終了",
+    "size": "サイズ",
+    "large": "大",
+    "middle": "中",
+    "small": "小",
+    "sticker":"ステッカー",
+    "lte-m button for enterprise":"しろボタン",
+    "soracom ug":"UGバージョン",
+    "user guide":"SORACOM LTE-M Button for Enterprise ユーザーガイド",
+    "sending":"送信中",
+    "sent":"送信完了",
+    "succeeded":"成功",
+    "failed":"失敗",
+    "battery level label": "バッテリーレベル",
+    "status label": "送信状況",
+    "en-US": "英語(USA)",
+    "ja-JP": "日本語",
+    "language": "表示原語"
+}

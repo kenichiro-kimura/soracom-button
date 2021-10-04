@@ -1,0 +1,20 @@
+{
+    "exit": "exit",
+    "size": "size",
+    "large": "large",
+    "middle": "middle",
+    "small": "smaill",
+    "sticker":"sticker",
+    "lte-m button for enterprise":"lte-m button for enterprise",
+    "soracom ug":"SORACOM User Group version",
+    "user guide":"SORACOM LTE-M Button for Enterprise user guide",
+    "sending":"sending",
+    "sent":"sent",
+    "succeeded":"succeeded",
+    "failed":"failed",
+    "battery level label": "Battery Lebel",
+    "status label": "Status",
+    "en-US": "English(USA)",
+    "ja-JP": "Japanese",
+    "language": "language"
+}

@@ -42,7 +42,11 @@ function dataSend () {
   nowSending = 1;
   let sendingCounter = 0;
   clearInterval(waitTimer);
-  commentElement.textContent += '送信中';
+  window.api.getI18NMessage('sending')
+    .then((message) => {
+      commentElement.textContent += message;
+    });
+
   changeLedClass('sending');
 
   sendingTimer = setInterval(() => {
@@ -59,12 +63,18 @@ function dataSend () {
         }
       ).then(() => {
         changeLedClass('sent');
-        result = '(成功)';
+        result = 'succeeded';
       }).catch(() => {
         changeLedClass('senterror');
-        result = '(失敗)';
+        result = 'failed';
       }).finally(() => {
-        commentElement.textContent = '送信完了' + result;
+        window.api.getI18NMessage('sent')
+          .then((message) => {
+            window.api.getI18NMessage(result)
+              .then((resultMessage) => {
+                commentElement.textContent = message + '(' + resultMessage + ')';
+              });
+          });
         nowSending = 0;
       });
     }
