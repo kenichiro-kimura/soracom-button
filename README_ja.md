@@ -25,11 +25,12 @@ distフォルダ以下に実行用ファイルが作成されます。
 
 ### SORACOMの準備
 
-実行するPCは、SORACOM Airなどを用いてSORACOMプラットフォームにアクセスできるようにしておいてください。
+実行するPCは、SORACOM AirまたはSORACOM Arcを用いてSORACOMプラットフォームにアクセスできるようにしておいてください。
 また、受信データを確認するために、接続に利用しているSIMの所属するSIMグループでSORACOM Harvestを有効にしておいてください。
 
 参考:
 - [各種デバイスでSORACOM Airを使用する](https://users.soracom.io/ja-jp/guides/devices/general/)
+- [SORACOM Arc](https://users.soracom.io/ja-jp/docs/arc/)
 - [SORACOM Harvest](https://soracom.jp/services/harvest/)
 
 ### 起動
@@ -67,19 +68,6 @@ distフォルダ以下に実行用ファイルが作成されます。
 [表示] > [サイズ] > [大/中/小]を選ぶと、サイズが変わります(デフォルト：大)
 
 ![](img/app-image-ug.png)
-
-### SORACOMプラットフォームに送らずデータを確認する
-
-SORACOMプラットフォームに送り込まずにデータを確認する場合は、JSONデータのPOSTを受け付けられるようなエンドポイントを[Mockbin](https://mockbin.org/)などで作成し、設定ファイルを修正してください。
-設定ファイルはWindowsだと`c:/Users/(ユーザ名)/AppData/Roaming/soracom-button/config.json`、Macだと`~/Library/Application Support/soracom-button/config.json`です。
-
-```json
-{
-        "endpoint": "http://uni.soracom.io"
-}
-```
-
-このファイルの「endpoint」の値を修正してください。
 
 # お問い合わせ
 
