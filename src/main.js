@@ -1,5 +1,6 @@
 const path = require('path');
 const { app, shell, Menu, BrowserWindow, ipcMain } = require('electron');
+const i18n = require('./i18n');
 
 // ウィンドーオブジェクトを全域に維持
 let mainWindow = null;
@@ -11,71 +12,6 @@ app.on('window-all-closed', function () {
   }
 });
 
-// メニューを準備する
-const template = Menu.buildFromTemplate([
-  {
-    label: 'File',
-    submenu: [
-      { role: 'close', label: '終了' }
-    ]
-  },
-  {
-    label: 'View',
-    submenu: [
-      {
-        label: 'サイズ',
-        submenu: [
-          {
-            label: '大',
-            click: () => { resize('large'); }
-          },
-          {
-            label: '中',
-            click: () => { resize('middle'); }
-          },
-          {
-            label: '小',
-            click: () => { resize('small'); }
-          }
-        ]
-      },
-      {
-        label: 'ステッカー',
-        submenu: [
-          {
-            label: 'しろボタン',
-            click: () => { setSticker('white'); }
-          },
-          {
-            label: 'UGバージョン',
-            click: () => { setSticker('soracomug'); }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    label: 'Help',
-    submenu: [
-      {
-        label: 'SORACOM LTE-M Button for Enterprise ユーザーガイド',
-        click: async () => {
-          await shell.openExternal('https://users.soracom.io/ja-jp/guides/iot-devices/lte-m-button-enterprise/').catch();
-        }
-      },
-      {
-        label: 'open devTools for WebView',
-        click () {
-          mainWindow.openDevTools();
-        }
-      }
-    ]
-  }
-]);
-
-// メニューを適用する
-Menu.setApplicationMenu(template);
-
 // 設定を読み込む
 const Preference = require('electron-store');
 const preference = new Preference();
@@ -84,6 +20,92 @@ const endpoint = preference.get('endpoint', 'http://uni.soracom.io');
 preference.set('endpoint', endpoint);
 const udphost = preference.get('udphost', 'button.soracom.io');
 preference.set('udphost', udphost);
+const language = preference.get('language', 'en-US');
+preference.set('language', language);
+
+i18n.changeLanguage(language);
+
+// メニューを準備する
+const setMenu = () => {
+  const template = Menu.buildFromTemplate([
+    {
+      label: i18n.t('file'),
+      submenu: [
+        { role: 'close', label: i18n.t('exit') }
+      ]
+    },
+    {
+      label: i18n.t('view'),
+      submenu: [
+        {
+          label: i18n.t('size'),
+          submenu: [
+            {
+              label: i18n.t('large'),
+              click: () => { resize('large'); }
+            },
+            {
+              label: i18n.t('middle'),
+              click: () => { resize('middle'); }
+            },
+            {
+              label: i18n.t('small'),
+              click: () => { resize('small'); }
+            }
+          ]
+        },
+        {
+          label: i18n.t('sticker'),
+          submenu: [
+            {
+              label: i18n.t('lte-m button for enterprise'),
+              click: () => { setSticker('white'); }
+            },
+            {
+              label: i18n.t('soracom ug'),
+              click: () => { setSticker('soracomug'); }
+            }
+          ]
+        },
+        {
+          label: i18n.t('language'),
+          submenu: [
+            {
+              label: i18n.t('en-US'),
+              click: () => { changeLanguage('en-US'); }
+            },
+            {
+              label: i18n.t('ja-JP'),
+              click: () => { changeLanguage('ja-JP'); }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      label: i18n.t('help'),
+      submenu: [
+        {
+          label: i18n.t('user guide'),
+          click: async () => {
+            await shell.openExternal('https://users.soracom.io/ja-jp/guides/iot-devices/lte-m-button-enterprise/').catch();
+          }
+        },
+        {
+          label: 'open devTools for WebView',
+          click () {
+            mainWindow.openDevTools();
+          }
+        }
+      ]
+    }
+  ]);
+
+  // メニューを適用する
+  Menu.setApplicationMenu(template);
+};
+
+setMenu();
 
 // Electronの初期化が完了し、ブラウザーウィンドーを開く準備ができたら実行
 app.on('ready', function () {
@@ -118,6 +140,13 @@ const setSticker = (label) => {
   mainWindow.webContents.send('ipc-set-sticker', label);
 };
 
+const changeLanguage = (newLanguage) => {
+  preference.set('language', newLanguage);
+  i18n.changeLanguage(newLanguage);
+  mainWindow.webContents.send('ipc-set-label');
+  setMenu();
+};
+
 ipcMain.handle('ipc-get-endpoint', () => {
   return endpoint;
 });
@@ -142,3 +171,7 @@ const resize = (size) => {
   }
   mainWindow.webContents.send('ipc-set-window-size', size);
 };
+
+ipcMain.handle('ipc-get-i18n-message', (event, label) => {
+  return i18n.t(label);
+});

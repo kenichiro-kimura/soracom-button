@@ -58,9 +58,13 @@ It takes about 5 seconds to complete the transmission, depending on the network 
 
 From the [SORACOM User Console](https://console.soracom.io), go to [Data Collection, Storage, and Visualization] > [SORACOM Harvest Data] to check the data.
 
+### Change the display language
+
+If you select "Japanese" in [View] > [language], the menu and messages will be in Japanese.
+
 ### Change the look and feel.
 
-Select [View] > [Style] > [UG Version] to change the button to the version with the SORACOM UG sticker on it. The behavior will not change.
+Select [View] > [Sticker] > [UG Version] to change the button to the version with the SORACOM UG sticker on it. The behavior will not change.
 
 Select [View] > [Size] > [Large/Middle/Smaill] to change the size of button.
 
