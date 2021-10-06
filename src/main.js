@@ -26,82 +26,86 @@ preference.set('language', language);
 i18n.changeLanguage(language);
 
 // メニューを準備する
-const template = Menu.buildFromTemplate([
-  {
-    label: 'File',
-    submenu: [
-      { role: 'close', label: i18n.t('exit') }
-    ]
-  },
-  {
-    label: 'View',
-    submenu: [
-      {
-        label: i18n.t('size'),
-        submenu: [
-          {
-            label: i18n.t('large'),
-            click: () => { resize('large'); }
-          },
-          {
-            label: i18n.t('middle'),
-            click: () => { resize('middle'); }
-          },
-          {
-            label: i18n.t('small'),
-            click: () => { resize('small'); }
-          }
-        ]
-      },
-      {
-        label: i18n.t('sticker'),
-        submenu: [
-          {
-            label: i18n.t('lte-m button for enterprise'),
-            click: () => { setSticker('white'); }
-          },
-          {
-            label: i18n.t('soracom ug'),
-            click: () => { setSticker('soracomug'); }
-          }
-        ]
-      },
-      {
-        label: i18n.t('language'),
-        submenu: [
-          {
-            label: i18n.t('en-US'),
-            click: () => { changeLanguage('en-US'); }
-          },
-          {
-            label: i18n.t('ja-JP'),
-            click: () => { changeLanguage('ja-JP'); }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    label: 'Help',
-    submenu: [
-      {
-        label: i18n.t('user guide'),
-        click: async () => {
-          await shell.openExternal('https://users.soracom.io/ja-jp/guides/iot-devices/lte-m-button-enterprise/').catch();
+const setMenu = () => {
+  const template = Menu.buildFromTemplate([
+    {
+      label: i18n.t('file'),
+      submenu: [
+        { role: 'close', label: i18n.t('exit') }
+      ]
+    },
+    {
+      label: i18n.t('view'),
+      submenu: [
+        {
+          label: i18n.t('size'),
+          submenu: [
+            {
+              label: i18n.t('large'),
+              click: () => { resize('large'); }
+            },
+            {
+              label: i18n.t('middle'),
+              click: () => { resize('middle'); }
+            },
+            {
+              label: i18n.t('small'),
+              click: () => { resize('small'); }
+            }
+          ]
+        },
+        {
+          label: i18n.t('sticker'),
+          submenu: [
+            {
+              label: i18n.t('lte-m button for enterprise'),
+              click: () => { setSticker('white'); }
+            },
+            {
+              label: i18n.t('soracom ug'),
+              click: () => { setSticker('soracomug'); }
+            }
+          ]
+        },
+        {
+          label: i18n.t('language'),
+          submenu: [
+            {
+              label: i18n.t('en-US'),
+              click: () => { changeLanguage('en-US'); }
+            },
+            {
+              label: i18n.t('ja-JP'),
+              click: () => { changeLanguage('ja-JP'); }
+            }
+          ]
         }
-      },
-      {
-        label: 'open devTools for WebView',
-        click () {
-          mainWindow.openDevTools();
+      ]
+    },
+    {
+      label: i18n.t('help'),
+      submenu: [
+        {
+          label: i18n.t('user guide'),
+          click: async () => {
+            await shell.openExternal('https://users.soracom.io/ja-jp/guides/iot-devices/lte-m-button-enterprise/').catch();
+          }
+        },
+        {
+          label: 'open devTools for WebView',
+          click () {
+            mainWindow.openDevTools();
+          }
         }
-      }
-    ]
-  }
-]);
+      ]
+    }
+  ]);
 
-// メニューを適用する
-Menu.setApplicationMenu(template);
+  // メニューを適用する
+  Menu.setApplicationMenu(template);
+};
+
+setMenu();
 
 // Electronの初期化が完了し、ブラウザーウィンドーを開く準備ができたら実行
 app.on('ready', function () {
@@ -140,6 +144,7 @@ const changeLanguage = (newLanguage) => {
   preference.set('language', newLanguage);
   i18n.changeLanguage(newLanguage);
   mainWindow.webContents.send('ipc-set-label');
+  setMenu();
 };
 
 ipcMain.handle('ipc-get-endpoint', () => {

@@ -1,4 +1,7 @@
 {
+    "file": "File",
+    "view": "View",
+    "help": "Help",
     "exit": "exit",
     "size": "size",
     "large": "large",
