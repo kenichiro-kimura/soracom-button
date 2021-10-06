@@ -41,7 +41,7 @@ When you start the software, the main window will open as shown below.
 ![](img/app-image.png)
 
 ### Quit
-Select [Exit] > [File] menu.
+Select [File] > [Exit] menu.
 
 ### Send data.
 
