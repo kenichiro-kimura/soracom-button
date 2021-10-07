@@ -2,8 +2,6 @@
 
 This is a [SORACOM LTE-M Button for Enterprise](https://users.soracom.io/ja-jp/guides/iot-devices/lte-m-button-enterprise/) simulator applicaton works on Windows and Mac.
 
-Currently, the text in the application is only available in Japanese.
-
 ## How to install 
 
 Download and run the binary that matches your environment from the release page.
@@ -28,11 +26,12 @@ Executable files will be created under the `dist` folder.
 
 ### Preparing for SORACOM
 
-Make sure that the PC you will be running on has access to the SORACOM platform using SORACOM Air ,etc.
+Make sure that the PC you will be running on has access to the SORACOM platform using SORACOM Air or SORACOM Arc.
 Also, make sure that SORACOM Harvest is enabled in the SIM group to which the SIM used for the connection belongs in order to check the incoming data.
 
 Reference:
 - [Using SORACOM Air with various devices](https://users.soracom.io/ja-jp/guides/devices/general/)
+- [SORACOM Arc](https://users.soracom.io/ja-jp/docs/arc/)
 - [SORACOM Harvest](https://soracom.jp/services/harvest/)
 
 ### Startup
@@ -42,7 +41,7 @@ When you start the software, the main window will open as shown below.
 ![](img/app-image.png)
 
 ### Quit
-Select [Exit] > [File] menu.
+Select [File] > [Exit] menu.
 
 ### Send data.
 
@@ -58,26 +57,17 @@ It takes about 5 seconds to complete the transmission, depending on the network 
 
 From the [SORACOM User Console](https://console.soracom.io), go to [Data Collection, Storage, and Visualization] > [SORACOM Harvest Data] to check the data.
 
+### Change the display language
+
+If you select "Japanese" in [View] > [language], the menu and messages will be in Japanese.
+
 ### Change the look and feel.
 
-Select [View] > [Style] > [UG Version] to change the button to the version with the SORACOM UG sticker on it. The behavior will not change.
+Select [View] > [Sticker] > [UG Version] to change the button to the version with the SORACOM UG sticker on it. The behavior will not change.
 
 Select [View] > [Size] > [Large/Middle/Smaill] to change the size of button.
 
 ![](img/app-image-ug.png)
-
-### Check the data without sending it to the SORACOM platform
-
-If you want to check the data without sending it to the SORACOM platform, create an endpoint that can accept JSON data POST using [Mockbin](https://mockbin.org/), etc., and modify the configuration file.
-The configuration file is `c:/Users/(user name)/AppData/Roaming/soracom-button/config.json` on Windows, and ` ~/Library/Application Support/soracom-button/config.json` on a Mac.
-
-```json
-{
-        "endpoint": "http://uni.soracom.io"
-}
-```
-
-Please modify the value of "endpoint" in this file.
 
 # Contact us
 

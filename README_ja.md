@@ -25,11 +25,12 @@ distフォルダ以下に実行用ファイルが作成されます。
 
 ### SORACOMの準備
 
-実行するPCは、SORACOM Airなどを用いてSORACOMプラットフォームにアクセスできるようにしておいてください。
+実行するPCは、SORACOM AirまたはSORACOM Arcを用いてSORACOMプラットフォームにアクセスできるようにしておいてください。
 また、受信データを確認するために、接続に利用しているSIMの所属するSIMグループでSORACOM Harvestを有効にしておいてください。
 
 参考:
 - [各種デバイスでSORACOM Airを使用する](https://users.soracom.io/ja-jp/guides/devices/general/)
+- [SORACOM Arc](https://users.soracom.io/ja-jp/docs/arc/)
 - [SORACOM Harvest](https://soracom.jp/services/harvest/)
 
 ### 起動
@@ -38,8 +39,13 @@ distフォルダ以下に実行用ファイルが作成されます。
 
 ![](img/app-image.png)
 
+### 表示言語の切り替え
+
+[View] > [language]で「japanese」を選ぶとメニューとメッセージが日本語になります。
+日本語表示時に、[表示] > [原語]で「英語(en-US)」を選択するとメッセージが英語になります。
+
 ### 終了
-[File] > [終了]を選びます
+[ファイル] > [終了]を選びます
 
 ### データを送信する
 
@@ -57,24 +63,11 @@ distフォルダ以下に実行用ファイルが作成されます。
 
 ### 見た目を変更する
 
-[View] > [見た目] > [UGバージョン]を選ぶと、SORACOM UGのステッカーを貼ったバージョンのボタンに変わります。動作は変わりません。
+[表示] > [ステッカー] > [UGバージョン]を選ぶと、SORACOM UGのステッカーを貼ったバージョンのボタンに変わります。動作は変わりません。
 
-[View] > [サイズ] > [大/中/小]を選ぶと、サイズが変わります(デフォルト：大)
+[表示] > [サイズ] > [大/中/小]を選ぶと、サイズが変わります(デフォルト：大)
 
 ![](img/app-image-ug.png)
-
-### SORACOMプラットフォームに送らずデータを確認する
-
-SORACOMプラットフォームに送り込まずにデータを確認する場合は、JSONデータのPOSTを受け付けられるようなエンドポイントを[Mockbin](https://mockbin.org/)などで作成し、設定ファイルを修正してください。
-設定ファイルはWindowsだと`c:/Users/(ユーザ名)/AppData/Roaming/soracom-button/config.json`、Macだと`~/Library/Application Support/soracom-button/config.json`です。
-
-```json
-{
-        "endpoint": "http://uni.soracom.io"
-}
-```
-
-このファイルの「endpoint」の値を修正してください。
 
 # お問い合わせ
 

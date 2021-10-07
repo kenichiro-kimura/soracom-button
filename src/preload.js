@@ -22,6 +22,9 @@ contextBridge.exposeInMainWorld(
     setWindowSize: (listener) => {
       ipcRenderer.on('ipc-set-window-size', (event, arg) => listener(arg));
     },
+    setLabel: (listener) => {
+      ipcRenderer.on('ipc-set-label', (event, arg) => listener(arg));
+    },
     getEndpoint: () =>
       ipcRenderer.invoke('ipc-get-endpoint')
         .then((result) => { endpoint = result; })
@@ -29,7 +32,11 @@ contextBridge.exposeInMainWorld(
     getUdpHost: () =>
       ipcRenderer.invoke('ipc-get-udphost')
         .then((result) => { udpHost = result; })
-        .catch(err => console.log(err))
+        .catch(err => console.log(err)),
+    getI18NMessage: async (label) => {
+      const rt = await ipcRenderer.invoke('ipc-get-i18n-message', label);
+      return (rt);
+    }
   }
 );
 
