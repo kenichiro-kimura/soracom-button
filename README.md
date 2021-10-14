@@ -30,9 +30,9 @@ Make sure that the PC you will be running on has access to the SORACOM platform 
 Also, make sure that SORACOM Harvest is enabled in the SIM group to which the SIM used for the connection belongs in order to check the incoming data.
 
 Reference:
-- [Using SORACOM Air with various devices](https://users.soracom.io/ja-jp/guides/devices/general/)
-- [SORACOM Arc](https://users.soracom.io/ja-jp/docs/arc/)
-- [SORACOM Harvest](https://soracom.jp/services/harvest/)
+- [Connection Guides](https://developers.soracom.io/en/start/#connection-guides)
+- [SORACOM Arc](https://developers.soracom.io/en/docs/arc/)
+- [SORACOM Harvest](https://developers.soracom.io/en/docs/harvest/)
 
 ### Startup
 
