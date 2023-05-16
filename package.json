@@ -11,8 +11,8 @@
         "path": "^0.12.7"
     },
     "devDependencies": {
-        "electron": "^18.3.7",
-        "electron-builder": "^22.11.7",
+        "electron": "^24.3.0",
+        "electron-builder": "^24.4.0",
         "eslint": "^7.32.0",
         "eslint-config-semistandard": "^16.0.0",
         "eslint-config-standard": "^16.0.3",
