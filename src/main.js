@@ -117,8 +117,8 @@ app.on('ready', function () {
     webPreferences: {
       // In Electron 12, the default will be changed to true.
       worldSafeExecuteJavaScript: true,
-      // XSS対策としてnodeモジュールをレンダラープロセスで使えなくする
-      nodeIntegration: false,
+      // preload.jsでモジュールを使えるようにする
+      nodeIntegration: true,
       // レンダラープロセスに公開するAPIのファイル
       // （Electron 11 から、デフォルト：falseが非推奨となった）
       contextIsolation: true,
