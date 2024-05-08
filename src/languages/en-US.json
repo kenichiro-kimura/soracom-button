@@ -19,5 +19,10 @@
     "status label": "Status",
     "en-US": "English(USA)",
     "ja-JP": "Japanese",
+    "zh-CN": "Chinese",
+    "ko-KR": "Korean",
+    "es-ES": "Spanish",
+    "de-DE": "German",
+    "fr-FR": "French",
     "language": "language"
 }

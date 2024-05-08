@@ -12,7 +12,12 @@ const options = {
   },
   whiteList: [
     'en-US',
-    'ja-JP'
+    'ja-JP',
+    'zh-CN',
+    'ko-KR',
+    'es-ES',
+    'de-DE',
+    'fr-FR'
   ]
 };
 

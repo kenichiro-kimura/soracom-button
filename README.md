@@ -59,7 +59,17 @@ From the [SORACOM User Console](https://console.soracom.io), go to [Data Collect
 
 ### Change the display language
 
-If you select "Japanese" in [View] > [language], the menu and messages will be in Japanese.
+Select [View] > [language]. The supported languages are as follows.
+
+- English
+- Japanese
+- Chinese (Simplified)
+- Korean
+- Spanish
+- Deutsch
+- French
+
+The default is English. Also, since machine translation is used for translation, the translation may not be accurate.
 
 ### Change the look and feel.
 
