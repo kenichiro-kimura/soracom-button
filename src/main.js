@@ -77,6 +77,26 @@ const setMenu = () => {
             {
               label: i18n.t('ja-JP'),
               click: () => { changeLanguage('ja-JP'); }
+            },
+            {
+              label: i18n.t('zh-CN'),
+              click: () => { changeLanguage('zh-CN'); }
+            },
+            {
+              label: i18n.t('ko-KR'),
+              click: () => { changeLanguage('ko-KR'); }
+            },
+            {
+              label: i18n.t('es-ES'),
+              click: () => { changeLanguage('es-ES'); }
+            },
+            {
+              label: i18n.t('de-DE'),
+              click: () => { changeLanguage('de-DE'); }
+            },
+            {
+              label: i18n.t('fr-FR'),
+              click: () => { changeLanguage('fr-FR'); }
             }
           ]
         }
