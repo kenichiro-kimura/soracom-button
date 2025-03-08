@@ -4,7 +4,7 @@
     "description": "",
     "main": "src/main.js",
     "dependencies": {
-        "axios": "^1.6.0",
+        "axios": "^1.8.2",
         "electron-store": "^8.0.1",
         "i18next": "^21.2.0",
         "i18next-fs-backend": "^1.1.1",
