@@ -176,7 +176,7 @@ ipcMain.handle('ipc-send-udp', async (event, arg) => {
         batteryLevel: arg.batteryLevel,
         timestamp: Date.now()
       }));
-      
+
       const timeout = setTimeout(() => {
         client.close();
         reject(new Error('UDP timeout'));
@@ -229,11 +229,11 @@ ipcMain.handle('ipc-send-http', async (event, arg) => {
 
       const req = (url.protocol === 'https:' ? https : http).request(options, (res) => {
         let data = '';
-        
+
         res.on('data', (chunk) => {
           data += chunk;
         });
-        
+
         res.on('end', () => {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             try {
@@ -256,7 +256,7 @@ ipcMain.handle('ipc-send-http', async (event, arg) => {
         const postData = typeof arg.body === 'string' ? arg.body : JSON.stringify(arg.body);
         req.write(postData);
       }
-      
+
       req.end();
     } catch (err) {
       reject(err);

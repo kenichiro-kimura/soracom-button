@@ -1,9 +1,4 @@
 const { contextBridge, ipcRenderer } = require('electron');
-// Node.jsモジュールをメインプロセス側で処理するように変更
-const UNI_PORT = 23080;
-const UDP_TIMEOUT = 5000;
-let endpoint;
-let udpHost;
 
 contextBridge.exposeInMainWorld(
   'api', {
@@ -23,11 +18,11 @@ contextBridge.exposeInMainWorld(
       ipcRenderer.on('ipc-set-label', (event, arg) => listener(arg));
     },
     getEndpoint: async () => {
-      endpoint = await ipcRenderer.invoke('ipc-get-endpoint');
+      const endpoint = await ipcRenderer.invoke('ipc-get-endpoint');
       return endpoint;
     },
     getUdpHost: async () => {
-      udpHost = await ipcRenderer.invoke('ipc-get-udphost');
+      const udpHost = await ipcRenderer.invoke('ipc-get-udphost');
       return udpHost;
     },
     getI18NMessage: async (label) => {
