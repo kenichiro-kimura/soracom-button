@@ -8,7 +8,7 @@ const IPC_CHANNELS = {
   GET_ENDPOINT: 'soracom:get-endpoint',
   GET_UDP_HOST: 'soracom:get-udphost',
   GET_I18N_MESSAGE: 'soracom:get-i18n-message',
-  
+
   // メインプロセスからの通知（on）
   SET_STICKER: 'soracom:set-sticker',
   SET_WINDOW_SIZE: 'soracom:set-window-size',
@@ -23,7 +23,7 @@ const api = {
   getEndpoint: async () => ipcRenderer.invoke(IPC_CHANNELS.GET_ENDPOINT),
   getUdpHost: async () => ipcRenderer.invoke(IPC_CHANNELS.GET_UDP_HOST),
   getI18NMessage: async (label) => ipcRenderer.invoke(IPC_CHANNELS.GET_I18N_MESSAGE, label),
-  
+
   // イベントリスナー（on）メソッド
   setSticker: (callback) => {
     ipcRenderer.on(IPC_CHANNELS.SET_STICKER, (_, arg) => callback(arg));

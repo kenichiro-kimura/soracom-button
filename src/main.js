@@ -15,7 +15,7 @@ const IPC_CHANNELS = {
   GET_ENDPOINT: 'soracom:get-endpoint',
   GET_UDP_HOST: 'soracom:get-udphost',
   GET_I18N_MESSAGE: 'soracom:get-i18n-message',
-  
+
   // メインプロセスからの通知（send）
   SET_STICKER: 'soracom:set-sticker',
   SET_WINDOW_SIZE: 'soracom:set-window-size',
@@ -175,7 +175,7 @@ app.on('ready', function () {
   // 今のディレクトリーで「 index.html」をロード
   mainWindow.loadURL('file://' + __dirname + '/index.html');
 
-  mainWindow.on('ready-to-show', function() {
+  mainWindow.on('ready-to-show', function () {
     const sticker = preference.get('sticker', 'white');
     preference.set('sticker', sticker);
     setSticker(sticker);
@@ -188,7 +188,7 @@ app.on('ready', function () {
 });
 
 // IPC ハンドラーの登録関数
-function setupIPCHandlers() {
+function setupIPCHandlers () {
   // UDP通信のハンドラー
   ipcMain.handle(IPC_CHANNELS.SEND_UDP, async (event, arg) => {
     return new Promise((resolve, reject) => {
@@ -306,17 +306,17 @@ const setSticker = (label) => {
 const changeLanguage = (newLanguage) => {
   preference.set('language', newLanguage);
   i18n.changeLanguage(newLanguage);
-  
+
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send(IPC_CHANNELS.SET_LABEL);
   }
-  
+
   setMenu();
 };
 
 const resize = (size) => {
   if (!mainWindow || mainWindow.isDestroyed()) return;
-  
+
   switch (size) {
     case 'large':
       mainWindow.setBounds({ width: 1210, height: 700 });
@@ -330,7 +330,7 @@ const resize = (size) => {
     default:
       size = 'large';
   }
-  
+
   mainWindow.webContents.send(IPC_CHANNELS.SET_WINDOW_SIZE, size);
 };
 
@@ -350,9 +350,9 @@ app.on('activate', () => {
         preload: path.resolve(__dirname, 'preload.js')
       }
     });
-    
+
     mainWindow.loadURL('file://' + __dirname + '/index.html');
-    
+
     mainWindow.on('closed', function () {
       mainWindow = null;
     });

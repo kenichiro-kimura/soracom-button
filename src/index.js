@@ -9,19 +9,19 @@ window.onload = async () => {
   try {
     // UI要素の初期化
     initButton('button', 'comment', 'led');
-    
+
     // 設定の読み込み
     await Promise.all([
       window.api.getEndpoint(),
       window.api.getUdpHost()
     ]);
-    
+
     // UI要素の取得
     mainElement = document.getElementById('main');
     stickerElement = document.getElementById('sticker');
     batteryLevelLabel = document.getElementById('batteryLevelLabel');
     statusLabel = document.getElementById('statusLabel');
-    
+
     // ラベルの設定
     await setLabel();
   } catch (error) {
@@ -72,7 +72,7 @@ const setLabel = async () => {
       window.api.getI18NMessage('battery level label'),
       window.api.getI18NMessage('status label')
     ]);
-    
+
     batteryLevelLabel.textContent = batteryLevelText;
     statusLabel.textContent = statusLabelText;
   } catch (error) {
