@@ -300,7 +300,7 @@ setupIPCHandlers();
 const setSticker = (label) => {
   if (mainWindow && !mainWindow.isDestroyed()) {
     preference.set('sticker', label);
-  mainWindow.webContents.send(IPC_CHANNELS.SET_STICKER, label);
+    mainWindow.webContents.send(IPC_CHANNELS.SET_STICKER, label);
   }
 };
 
