@@ -1,6 +1,15 @@
 const path = require('path');
 const { app, shell, Menu, BrowserWindow, ipcMain } = require('electron');
 const i18n = require('./i18n');
+// 通信処理に必要なモジュール
+const dgram = require('dgram');
+const https = require('https');
+const http = require('http');
+const URL = require('url').URL;
+
+// UDPとHTTP通信の設定
+const UNI_PORT = 23080;
+const UDP_TIMEOUT = 5000;
 
 // ウィンドーオブジェクトを全域に維持
 let mainWindow = null;
@@ -137,8 +146,8 @@ app.on('ready', function () {
     webPreferences: {
       // In Electron 12, the default will be changed to true.
       worldSafeExecuteJavaScript: true,
-      // preload.jsでモジュールを使えるようにする
-      nodeIntegration: true,
+      // セキュリティリスクを下げるためnodeIntegrationをfalseに設定
+      nodeIntegration: false,
       // レンダラープロセスに公開するAPIのファイル
       // （Electron 11 から、デフォルト：falseが非推奨となった）
       contextIsolation: true,
@@ -153,6 +162,105 @@ app.on('ready', function () {
   mainWindow.on('closed', function () {
     // ウィンドーオブジェクトの参照を削除
     mainWindow = null;
+  });
+});
+
+// UDP通信のハンドラー
+ipcMain.handle('ipc-send-udp', async (event, arg) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const client = dgram.createSocket('udp4');
+      const message = Buffer.from(JSON.stringify({
+        clickType: arg.clickType,
+        clickTypeName: arg.clickTypeName,
+        batteryLevel: arg.batteryLevel,
+        timestamp: Date.now()
+      }));
+      
+      const timeout = setTimeout(() => {
+        client.close();
+        reject(new Error('UDP timeout'));
+      }, UDP_TIMEOUT);
+
+      client.on('message', (msg) => {
+        clearTimeout(timeout);
+        client.close();
+        try {
+          const response = JSON.parse(msg);
+          resolve(response);
+        } catch (e) {
+          reject(e);
+        }
+      });
+
+      client.on('error', (err) => {
+        clearTimeout(timeout);
+        client.close();
+        reject(err);
+      });
+
+      client.send(message, 0, message.length, UNI_PORT, udphost, (err) => {
+        if (err) {
+          clearTimeout(timeout);
+          client.close();
+          reject(err);
+        }
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+});
+
+// HTTP通信のハンドラー
+ipcMain.handle('ipc-send-http', async (event, arg) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const url = new URL(arg.url);
+      const options = {
+        hostname: url.hostname,
+        port: url.port || (url.protocol === 'https:' ? 443 : 80),
+        path: url.pathname + url.search,
+        method: arg.method || 'POST',
+        headers: arg.headers || {
+          'Content-Type': 'application/json'
+        }
+      };
+
+      const req = (url.protocol === 'https:' ? https : http).request(options, (res) => {
+        let data = '';
+        
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+        
+        res.on('end', () => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            try {
+              const response = data ? JSON.parse(data) : {};
+              resolve(response);
+            } catch (e) {
+              resolve(data);
+            }
+          } else {
+            reject(new Error(`HTTP Error: ${res.statusCode}`));
+          }
+        });
+      });
+
+      req.on('error', (err) => {
+        reject(err);
+      });
+
+      if (arg.body) {
+        const postData = typeof arg.body === 'string' ? arg.body : JSON.stringify(arg.body);
+        req.write(postData);
+      }
+      
+      req.end();
+    } catch (err) {
+      reject(err);
+    }
   });
 });
 
