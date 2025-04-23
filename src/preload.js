@@ -33,10 +33,7 @@ const api = {
   },
   setLabel: (callback) => {
     ipcRenderer.on(IPC_CHANNELS.SET_LABEL, (_, arg) => callback(arg));
-  },
-
-  // IPC通信のチャネル名（テスト/デバッグ用）
-  channels: IPC_CHANNELS
+  }
 };
 
 // レンダラープロセスにAPIを公開
