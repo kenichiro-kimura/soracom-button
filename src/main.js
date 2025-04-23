@@ -22,7 +22,7 @@ app.on('window-all-closed', function () {
 });
 
 // 設定を読み込む
-const Preference = require('electron-store');
+const {default:Preference } = require('electron-store');
 const preference = new Preference();
 
 const endpoint = preference.get('endpoint', 'http://uni.soracom.io');
@@ -151,6 +151,9 @@ app.on('ready', function () {
       // レンダラープロセスに公開するAPIのファイル
       // （Electron 11 から、デフォルト：falseが非推奨となった）
       contextIsolation: true,
+      // sandboxの設定
+      sandbox: true,
+      // preloadの設定
       preload: path.resolve(__dirname, 'preload.js')
     }
   });
