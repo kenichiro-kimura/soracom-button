@@ -22,8 +22,8 @@ app.on('window-all-closed', function () {
 });
 
 // 設定を読み込む
-const {default:Preference } = require('electron-store');
-const preference = new Preference();
+const { default: Store } = require('electron-store');
+const preference = new Store();
 
 const endpoint = preference.get('endpoint', 'http://uni.soracom.io');
 preference.set('endpoint', endpoint);
