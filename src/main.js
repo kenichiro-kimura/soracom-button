@@ -31,7 +31,6 @@ const udphost = preference.get('udphost', 'button.soracom.io');
 preference.set('udphost', udphost);
 const language = preference.get('language', 'en-US');
 preference.set('language', language);
-
 i18n.changeLanguage(language);
 
 // メニューを準備する
@@ -161,6 +160,11 @@ app.on('ready', function () {
   // 今のディレクトリーで「 index.html」をロード
   mainWindow.loadURL('file://' + __dirname + '/index.html');
 
+  mainWindow.on('ready-to-show', function() {
+    const sticker = preference.get('sticker', 'white');
+    preference.set('sticker', sticker);
+    setSticker(sticker);
+  });
   // ウィンドーが閉じられたら呼び出される  (アプリケーション終了)
   mainWindow.on('closed', function () {
     // ウィンドーオブジェクトの参照を削除
@@ -188,11 +192,11 @@ ipcMain.handle('ipc-send-udp', async (event, arg) => {
       client.on('message', (msg) => {
         clearTimeout(timeout);
         client.close();
-        try {
-          const response = JSON.parse(msg);
-          resolve(response);
-        } catch (e) {
-          reject(e);
+        /* 戻り値の先頭が50(文字コード。数字の'2')で無い場合はデータエラー */
+        if (parseInt(msg[0]) !== 50) {
+          reject(msg);
+        } else {
+          resolve(msg);
         }
       });
 
@@ -268,6 +272,7 @@ ipcMain.handle('ipc-send-http', async (event, arg) => {
 });
 
 const setSticker = (label) => {
+  preference.set('sticker', label);
   mainWindow.webContents.send('ipc-set-sticker', label);
 };
 
