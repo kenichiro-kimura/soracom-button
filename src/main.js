@@ -46,7 +46,6 @@ const udphost = preference.get('udphost', 'button.soracom.io');
 preference.set('udphost', udphost);
 const language = preference.get('language', 'en-US');
 preference.set('language', language);
-
 i18n.changeLanguage(language);
 
 // メニューを準備する
@@ -176,6 +175,11 @@ app.on('ready', function () {
   // 今のディレクトリーで「 index.html」をロード
   mainWindow.loadURL('file://' + __dirname + '/index.html');
 
+  mainWindow.on('ready-to-show', function() {
+    const sticker = preference.get('sticker', 'white');
+    preference.set('sticker', sticker);
+    setSticker(sticker);
+  });
   // ウィンドーが閉じられたら呼び出される  (アプリケーション終了)
   mainWindow.on('closed', function () {
     // ウィンドーオブジェクトの参照を削除
@@ -202,16 +206,16 @@ function setupIPCHandlers() {
           reject(new Error('UDP timeout'));
         }, UDP_TIMEOUT);
 
-        client.on('message', (msg) => {
-          clearTimeout(timeout);
-          client.close();
-          try {
-            const response = JSON.parse(msg);
-            resolve(response);
-          } catch (e) {
-            reject(e);
-          }
-        });
+      client.on('message', (msg) => {
+        clearTimeout(timeout);
+        client.close();
+        /* 戻り値の先頭が50(文字コード。数字の'2')で無い場合はデータエラー */
+        if (parseInt(msg[0]) !== 50) {
+          reject(msg);
+        } else {
+          resolve(msg);
+        }
+      });
 
         client.on('error', (err) => {
           clearTimeout(timeout);
@@ -295,7 +299,8 @@ setupIPCHandlers();
 
 const setSticker = (label) => {
   if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.webContents.send(IPC_CHANNELS.SET_STICKER, label);
+    preference.set('sticker', label);
+  mainWindow.webContents.send(IPC_CHANNELS.SET_STICKER, label);
   }
 };
 
