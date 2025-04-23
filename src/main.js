@@ -194,28 +194,27 @@ function setupIPCHandlers() {
     return new Promise((resolve, reject) => {
       try {
         const client = dgram.createSocket('udp4');
-        const message = Buffer.from(JSON.stringify({
-          clickType: arg.clickType,
-          clickTypeName: arg.clickTypeName,
-          batteryLevel: arg.batteryLevel,
-          timestamp: Date.now()
-        }));
+        const message = new Uint8Array(4);
+        message[0] = 0x4d;
+        message[1] = parseInt(arg.clickType);
+        message[2] = parseInt(arg.batteryLevel);
+        message[3] = 0x4d + parseInt(arg.clickType) + parseInt(arg.batteryLevel);
 
         const timeout = setTimeout(() => {
           client.close();
           reject(new Error('UDP timeout'));
         }, UDP_TIMEOUT);
 
-      client.on('message', (msg) => {
-        clearTimeout(timeout);
-        client.close();
-        /* 戻り値の先頭が50(文字コード。数字の'2')で無い場合はデータエラー */
-        if (parseInt(msg[0]) !== 50) {
-          reject(msg);
-        } else {
-          resolve(msg);
-        }
-      });
+        client.on('message', (msg) => {
+          clearTimeout(timeout);
+          client.close();
+          /* 戻り値の先頭が50(文字コード。数字の'2')で無い場合はデータエラー */
+          if (parseInt(msg[0]) !== 50) {
+            reject(msg);
+          } else {
+            resolve(msg);
+          }
+        });
 
         client.on('error', (err) => {
           clearTimeout(timeout);
