@@ -173,13 +173,12 @@ app.on('ready', function () {
   });
 
   // 今のディレクトリーで「 index.html」をロード
-  mainWindow.loadURL('file://' + __dirname + '/index.html');
-
-  mainWindow.on('ready-to-show', function () {
+  mainWindow.loadURL('file://' + __dirname + '/index.html').then(() => {
     const sticker = preference.get('sticker', 'white');
     preference.set('sticker', sticker);
     setSticker(sticker);
   });
+
   // ウィンドーが閉じられたら呼び出される  (アプリケーション終了)
   mainWindow.on('closed', function () {
     // ウィンドーオブジェクトの参照を削除
