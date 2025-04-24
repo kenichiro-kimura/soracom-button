@@ -57,9 +57,9 @@ function dataSend () {
       let result;
       window.api.sendUdp(
         {
-          clickType: clickType,
-          clickTypeName: clickTypeName,
-          batteryLevel: batteryLevel
+          clickType,
+          clickTypeName,
+          batteryLevel
         }
       ).then(() => {
         changeLedClass('sent');
