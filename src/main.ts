@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import path from 'path';
 import Store from 'electron-store';
 import { app, shell, Menu, BrowserWindow, ipcMain, MenuItemConstructorOptions, BrowserWindowConstructorOptions } from 'electron';
@@ -21,7 +22,6 @@ const IPC_CHANNELS = {
   SET_WINDOW_SIZE: 'soracom:set-window-size',
   SET_LABEL: 'soracom:set-label'
 } as const;
-type IpcChannels = typeof IPC_CHANNELS[keyof typeof IPC_CHANNELS];
 
 // UDPとHTTP通信の設定
 const UNI_PORT = 23080;
@@ -140,7 +140,7 @@ const setMenu = () => {
             try {
               await shell.openExternal('https://users.soracom.io/ja-jp/guides/iot-devices/lte-m-button-enterprise/');
             } catch (e) {
-              // エラー時は何もしない
+              console.error('ユーザーガイドのURLを開く際にエラーが発生しました:', e);
             }
           }
         },
@@ -275,6 +275,7 @@ function setupIPCHandlers () {
                 const response = data ? JSON.parse(data) : {};
                 resolve(response);
               } catch (e) {
+                console.error(e);
                 resolve(data);
               }
             } else {

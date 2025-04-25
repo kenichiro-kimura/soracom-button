@@ -1,4 +1,5 @@
-const { contextBridge, ipcRenderer } = require('electron');
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { contextBridge, ipcRenderer } from 'electron';
 
 // IPC通信のチャネル名を定数として定義
 const IPC_CHANNELS = {
@@ -18,7 +19,9 @@ const IPC_CHANNELS = {
 // レンダラープロセスへ公開するAPI
 const api = {
   // 双方向通信（invoke）メソッド
-  sendHttp: async (arg: { url: string, method?: string, headers?: Record<string, string>, body?: any }) => ipcRenderer.invoke(IPC_CHANNELS.SEND_HTTP, arg),
+  sendHttp: async function (arg: { url: string; method?: string; headers?: Record<string, string>; body?: any; }) {
+    return ipcRenderer.invoke(IPC_CHANNELS.SEND_HTTP, arg);
+  },
   sendUdp: async (arg: { clickType: number|string, batteryLevel: number|string }) => ipcRenderer.invoke(IPC_CHANNELS.SEND_UDP, arg),
   getEndpoint: async () => ipcRenderer.invoke(IPC_CHANNELS.GET_ENDPOINT),
   getUdpHost: async () => ipcRenderer.invoke(IPC_CHANNELS.GET_UDP_HOST),
