@@ -83,6 +83,5 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            dist/*/soracom-button-Setup-*.exe
-            dist/*/soracom-button-Setup-*.dmg
-
+            dist/soracom-button-Setup-*.exe
+            dist/soracom-button-Setup-*.dmg
