@@ -1,4 +1,5 @@
 const path = require('path');
+const Store = require('electron-store');
 const { app, shell, Menu, BrowserWindow, ipcMain } = require('electron');
 const i18n = require('./i18n');
 // 通信処理に必要なモジュール
@@ -37,7 +38,6 @@ app.on('window-all-closed', function () {
 });
 
 // 設定を読み込む
-const { default: Store } = require('electron-store');
 const preference = new Store();
 
 const endpoint = preference.get('endpoint', 'http://uni.soracom.io');
@@ -173,13 +173,14 @@ app.on('ready', function () {
   });
 
   // 今のディレクトリーで「 index.html」をロード
-  mainWindow.loadURL('file://' + __dirname + '/index.html');
-
-  mainWindow.on('ready-to-show', function () {
+  mainWindow.loadURL('file://' + __dirname + '/index.html').then(() => {
     const sticker = preference.get('sticker', 'white');
     preference.set('sticker', sticker);
     setSticker(sticker);
+  }).catch((error) => {
+    console.error('ウィンドーのロード中にエラーが発生しました:', error);
   });
+
   // ウィンドーが閉じられたら呼び出される  (アプリケーション終了)
   mainWindow.on('closed', function () {
     // ウィンドーオブジェクトの参照を削除
