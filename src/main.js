@@ -177,6 +177,8 @@ app.on('ready', function () {
     const sticker = preference.get('sticker', 'white');
     preference.set('sticker', sticker);
     setSticker(sticker);
+  }).catch((error) => {
+    console.error('ウィンドーのロード中にエラーが発生しました:', error);
   });
 
   // ウィンドーが閉じられたら呼び出される  (アプリケーション終了)
