@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -13,19 +14,16 @@ jobs:
         include:
           - os: windows-latest
             build_cmd: npm run build-win64
-            artifact: dist/soracom-button-Setup-${{ steps.version.outputs.version }}_win64.exe
+            artifact_suffix: _win64.exe
             src: build/win-unpacked/soracom-button Setup.exe
-            rename: soracom-button-Setup-${{ steps.version.outputs.version }}_win64.exe
           - os: windows-latest
             build_cmd: npm run build-win32
-            artifact: dist/soracom-button-Setup-${{ steps.version.outputs.version }}_win32.exe
+            artifact_suffix: _win32.exe
             src: build/win-ia32-unpacked/soracom-button Setup.exe
-            rename: soracom-button-Setup-${{ steps.version.outputs.version }}_win32.exe
           - os: macos-latest
             build_cmd: npm run build-mac
-            artifact: dist/soracom-button-Setup-${{ steps.version.outputs.version }}.dmg
+            artifact_suffix: .dmg
             src: build/mac/*.dmg
-            rename: soracom-button-Setup-${{ steps.version.outputs.version }}.dmg
 
     steps:
       - uses: actions/checkout@v4
@@ -46,22 +44,30 @@ jobs:
       - name: Build
         run: ${{ matrix.build_cmd }}
 
-      - name: Find built file and rename
-        shell: bash
+      - name: Build
+        run: ${{ matrix.build_cmd }}
+
+      - name: Set artifact name
+        id: set_artifact_name
+        run: echo "artifact_name=soracom-button-Setup-${{ steps.version.outputs.version }}${{ matrix.artifact_suffix }}" >> $GITHUB_ENV
+
+      - name: Rename files
         run: |
           mkdir -p dist
           if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
             src_file=$(ls build/mac/*.dmg | head -n 1)
           else
             src_file="${{ matrix.src }}"
-          fi
+          cp "$src_file" "dist/${{ env.artifact_name }}"
           cp "$src_file" "dist/${{ matrix.rename }}"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.rename }}
-          path: dist/${{ matrix.rename }}
+          name: ${{ env.artifact_name }}
+          path: |
+            dist/${{ env.artifact_name }}
+            dist/${{ matrix.rename }}
 
   release:
     needs: build
