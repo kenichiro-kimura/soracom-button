@@ -57,7 +57,8 @@
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "${productName}-win-${arch}-${version}-setup.${ext}"
     }
   },
   "lint-staged": {
