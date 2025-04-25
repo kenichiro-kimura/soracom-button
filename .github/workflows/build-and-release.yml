@@ -60,6 +60,7 @@ jobs:
             src_file=$(ls build/mac/*.dmg | head -n 1)
           else
             src_file="${{ matrix.src }}"
+          fi
           cp "$src_file" "dist/${{ env.artifact_name }}"
           cp "$src_file" "dist/${{ matrix.rename }}"
 
