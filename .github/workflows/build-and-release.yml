@@ -42,9 +42,9 @@ jobs:
           echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
       - name: Build
-        run: ${{ matrix.build_cmd }}
+        run: npm run build
 
-      - name: Build
+      - name: Build release binaries
         run: ${{ matrix.build_cmd }}
 
       - name: Set artifact name
