@@ -18,21 +18,21 @@ const IPC_CHANNELS = {
 // レンダラープロセスへ公開するAPI
 const api = {
   // 双方向通信（invoke）メソッド
-  sendHttp: async (arg) => ipcRenderer.invoke(IPC_CHANNELS.SEND_HTTP, arg),
-  sendUdp: async (arg) => ipcRenderer.invoke(IPC_CHANNELS.SEND_UDP, arg),
+  sendHttp: async (arg: { url: string, method?: string, headers?: Record<string, string>, body?: any }) => ipcRenderer.invoke(IPC_CHANNELS.SEND_HTTP, arg),
+  sendUdp: async (arg: { clickType: number|string, batteryLevel: number|string }) => ipcRenderer.invoke(IPC_CHANNELS.SEND_UDP, arg),
   getEndpoint: async () => ipcRenderer.invoke(IPC_CHANNELS.GET_ENDPOINT),
   getUdpHost: async () => ipcRenderer.invoke(IPC_CHANNELS.GET_UDP_HOST),
-  getI18NMessage: async (label) => ipcRenderer.invoke(IPC_CHANNELS.GET_I18N_MESSAGE, label),
+  getI18NMessage: async (label: string) => ipcRenderer.invoke(IPC_CHANNELS.GET_I18N_MESSAGE, label),
 
   // イベントリスナー（on）メソッド
-  setSticker: (callback) => {
-    ipcRenderer.on(IPC_CHANNELS.SET_STICKER, (_, arg) => callback(arg));
+  setSticker: (callback: (arg: any) => void) => {
+    ipcRenderer.on(IPC_CHANNELS.SET_STICKER, (_: Electron.IpcRendererEvent, arg: unknown) => callback(arg));
   },
-  setWindowSize: (callback) => {
-    ipcRenderer.on(IPC_CHANNELS.SET_WINDOW_SIZE, (_, arg) => callback(arg));
+  setWindowSize: (callback: (arg: any) => void) => {
+    ipcRenderer.on(IPC_CHANNELS.SET_WINDOW_SIZE, (_: Electron.IpcRendererEvent, arg: unknown) => callback(arg));
   },
-  setLabel: (callback) => {
-    ipcRenderer.on(IPC_CHANNELS.SET_LABEL, (_, arg) => callback(arg));
+  setLabel: (callback: (arg: any) => void) => {
+    ipcRenderer.on(IPC_CHANNELS.SET_LABEL, (_: Electron.IpcRendererEvent, arg: unknown) => callback(arg));
   }
 };
 

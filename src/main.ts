@@ -1,12 +1,11 @@
-const path = require('path');
-const Store = require('electron-store');
-const { app, shell, Menu, BrowserWindow, ipcMain } = require('electron');
-const i18n = require('./i18n');
-// 通信処理に必要なモジュール
-const dgram = require('dgram');
-const https = require('https');
-const http = require('http');
-const URL = require('url').URL;
+import path from 'path';
+import Store from 'electron-store';
+import { app, shell, Menu, BrowserWindow, ipcMain, MenuItemConstructorOptions, BrowserWindowConstructorOptions } from 'electron';
+import i18n from './i18n';
+import dgram from 'dgram';
+import https from 'https';
+import http from 'http';
+import { URL } from 'url';
 
 // IPC通信のチャネル名を定数として定義
 const IPC_CHANNELS = {
@@ -21,14 +20,15 @@ const IPC_CHANNELS = {
   SET_STICKER: 'soracom:set-sticker',
   SET_WINDOW_SIZE: 'soracom:set-window-size',
   SET_LABEL: 'soracom:set-label'
-};
+} as const;
+type IpcChannels = typeof IPC_CHANNELS[keyof typeof IPC_CHANNELS];
 
 // UDPとHTTP通信の設定
 const UNI_PORT = 23080;
 const UDP_TIMEOUT = 5000;
 
 // ウィンドーオブジェクトを全域に維持
-let mainWindow = null;
+let mainWindow: BrowserWindow | null = null;
 
 // すべてのウィンドーが閉じられたら呼び出される (アプリケーション終了)
 app.on('window-all-closed', function () {
@@ -38,19 +38,25 @@ app.on('window-all-closed', function () {
 });
 
 // 設定を読み込む
-const preference = new Store();
+type PrefStore = {
+  endpoint: string;
+  udphost: string;
+  language: string;
+  sticker?: string;
+};
+const preference = new Store<PrefStore>();
 
-const endpoint = preference.get('endpoint', 'http://uni.soracom.io');
+const endpoint = preference.get('endpoint') ?? 'http://uni.soracom.io';
 preference.set('endpoint', endpoint);
-const udphost = preference.get('udphost', 'button.soracom.io');
+const udphost = preference.get('udphost') ?? 'button.soracom.io';
 preference.set('udphost', udphost);
-const language = preference.get('language', 'en-US');
+const language = preference.get('language') ?? 'en-US';
 preference.set('language', language);
 i18n.changeLanguage(language);
 
 // メニューを準備する
 const setMenu = () => {
-  const template = Menu.buildFromTemplate([
+  const template: MenuItemConstructorOptions[] = [
     {
       label: i18n.t('file'),
       submenu: [
@@ -131,35 +137,38 @@ const setMenu = () => {
         {
           label: i18n.t('user guide'),
           click: async () => {
-            await shell.openExternal('https://users.soracom.io/ja-jp/guides/iot-devices/lte-m-button-enterprise/').catch();
+            try {
+              await shell.openExternal('https://users.soracom.io/ja-jp/guides/iot-devices/lte-m-button-enterprise/');
+            } catch (e) {
+              // エラー時は何もしない
+            }
           }
         },
         {
           label: 'open devTools for WebView',
           click () {
-            mainWindow.openDevTools();
+            if (mainWindow && !mainWindow.isDestroyed()) {
+              mainWindow.webContents.openDevTools();
+            }
           }
         }
       ]
     }
-  ]);
+  ];
 
   // メニューを適用する
-  Menu.setApplicationMenu(template);
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 };
 
 setMenu();
 
 // Electronの初期化が完了し、ブラウザーウィンドーを開く準備ができたら実行
 app.on('ready', function () {
-  // 新しいブラウザーウィンドーを生成
-  mainWindow = new BrowserWindow({
+  const options: BrowserWindowConstructorOptions = {
     width: 1210,
     height: 700,
     title: 'soracom button',
     webPreferences: {
-      // In Electron 12, the default will be changed to true.
-      worldSafeExecuteJavaScript: true,
       // セキュリティリスクを下げるためnodeIntegrationをfalseに設定
       nodeIntegration: false,
       // レンダラープロセスに公開するAPIのファイル
@@ -170,7 +179,9 @@ app.on('ready', function () {
       // preloadの設定
       preload: path.resolve(__dirname, 'preload.js')
     }
-  });
+  };
+  // 新しいブラウザーウィンドーを生成
+  mainWindow = new BrowserWindow(options);
 
   // 今のディレクトリーで「 index.html」をロード
   mainWindow.loadURL('file://' + __dirname + '/index.html').then(() => {
@@ -191,15 +202,15 @@ app.on('ready', function () {
 // IPC ハンドラーの登録関数
 function setupIPCHandlers () {
   // UDP通信のハンドラー
-  ipcMain.handle(IPC_CHANNELS.SEND_UDP, async (event, arg) => {
+  ipcMain.handle(IPC_CHANNELS.SEND_UDP, async (_event, arg: { clickType: number|string, batteryLevel: number|string }) => {
     return new Promise((resolve, reject) => {
       try {
         const client = dgram.createSocket('udp4');
         const message = new Uint8Array(4);
         message[0] = 0x4d;
-        message[1] = parseInt(arg.clickType);
-        message[2] = parseInt(arg.batteryLevel);
-        message[3] = 0x4d + parseInt(arg.clickType) + parseInt(arg.batteryLevel);
+        message[1] = Number(arg.clickType);
+        message[2] = Number(arg.batteryLevel);
+        message[3] = 0x4d + Number(arg.clickType) + Number(arg.batteryLevel);
 
         const timeout = setTimeout(() => {
           client.close();
@@ -210,7 +221,7 @@ function setupIPCHandlers () {
           clearTimeout(timeout);
           client.close();
           /* 戻り値の先頭が50(文字コード。数字の'2')で無い場合はデータエラー */
-          if (parseInt(msg[0]) !== 50) {
+          if (msg[0] !== 50) {
             reject(msg);
           } else {
             resolve(msg);
@@ -237,7 +248,7 @@ function setupIPCHandlers () {
   });
 
   // HTTP通信のハンドラー
-  ipcMain.handle(IPC_CHANNELS.SEND_HTTP, async (event, arg) => {
+  ipcMain.handle(IPC_CHANNELS.SEND_HTTP, async (_event, arg: { url: string, method?: string, headers?: Record<string, string>, body?: any }) => {
     return new Promise((resolve, reject) => {
       try {
         const url = new URL(arg.url);
@@ -259,7 +270,7 @@ function setupIPCHandlers () {
           });
 
           res.on('end', () => {
-            if (res.statusCode >= 200 && res.statusCode < 300) {
+            if (typeof res.statusCode === 'number' && res.statusCode >= 200 && res.statusCode < 300) {
               try {
                 const response = data ? JSON.parse(data) : {};
                 resolve(response);
@@ -291,20 +302,20 @@ function setupIPCHandlers () {
   // 設定取得のハンドラー
   ipcMain.handle(IPC_CHANNELS.GET_ENDPOINT, () => endpoint);
   ipcMain.handle(IPC_CHANNELS.GET_UDP_HOST, () => udphost);
-  ipcMain.handle(IPC_CHANNELS.GET_I18N_MESSAGE, (event, label) => i18n.t(label));
+  ipcMain.handle(IPC_CHANNELS.GET_I18N_MESSAGE, (_event, label: string) => i18n.t(label));
 }
 
 // IPC ハンドラーの初期化
 setupIPCHandlers();
 
-const setSticker = (label) => {
+const setSticker = (label: string) => {
   if (mainWindow && !mainWindow.isDestroyed()) {
     preference.set('sticker', label);
     mainWindow.webContents.send(IPC_CHANNELS.SET_STICKER, label);
   }
 };
 
-const changeLanguage = (newLanguage) => {
+const changeLanguage = (newLanguage: string) => {
   preference.set('language', newLanguage);
   i18n.changeLanguage(newLanguage);
 
@@ -315,7 +326,7 @@ const changeLanguage = (newLanguage) => {
   setMenu();
 };
 
-const resize = (size) => {
+const resize = (size: 'large' | 'middle' | 'small') => {
   if (!mainWindow || mainWindow.isDestroyed()) return;
 
   switch (size) {
@@ -339,18 +350,18 @@ const resize = (size) => {
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     // 新しいウィンドウを作成
-    mainWindow = new BrowserWindow({
+    const options: BrowserWindowConstructorOptions = {
       width: 1210,
       height: 700,
       title: 'soracom button',
       webPreferences: {
-        worldSafeExecuteJavaScript: true,
         nodeIntegration: false,
         contextIsolation: true,
         sandbox: true,
         preload: path.resolve(__dirname, 'preload.js')
       }
-    });
+    };
+    mainWindow = new BrowserWindow(options);
 
     mainWindow.loadURL('file://' + __dirname + '/index.html');
 

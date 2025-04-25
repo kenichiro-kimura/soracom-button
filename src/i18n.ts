@@ -1,6 +1,6 @@
-const i18n = require('i18next');
-const i18nBackend = require('i18next-fs-backend');
-const path = require('path');
+import i18next from 'i18next';
+import i18nBackend from 'i18next-fs-backend';
+import path from 'path';
 
 const options = {
   lng: 'en-US',
@@ -21,7 +21,7 @@ const options = {
   ]
 };
 
-i18n.use(i18nBackend);
+i18next.use(i18nBackend);
+if (!i18next.isInitialized) i18next.init(options);
 
-if (!i18n.isInitialized) i18n.init(options);
-module.exports = i18n;
+export default i18next;
