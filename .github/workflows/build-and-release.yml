@@ -13,15 +13,15 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            build_cmd: npm run build-win64
+            build_cmd: npm run build-win64 --publish-never
             artifact_suffix: _win64.exe
             src: build/win-unpacked/soracom-button Setup.exe
           - os: windows-latest
-            build_cmd: npm run build-win32
+            build_cmd: npm run build-win32 --publish-never
             artifact_suffix: _win32.exe
             src: build/win-ia32-unpacked/soracom-button Setup.exe
           - os: macos-latest
-            build_cmd: npm run build-mac
+            build_cmd: npm run build-mac --publish-never
             artifact_suffix: .dmg
             src: build/mac/*.dmg
 
