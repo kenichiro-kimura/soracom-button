@@ -28,15 +28,11 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            build_cmd: npm run build-win64 --publish-never
+            build_cmd: npm run build-win64
           - os: windows-latest
-            build_cmd: npm run build-win32 --publish-never
-            artifact_suffix: _win32.exe
-            src: build/win-ia32-unpacked/soracom-button Setup.exe
+            build_cmd: npm run build-win32
           - os: macos-latest
-            build_cmd: npm run build-mac --publish-never
-            artifact_suffix: .dmg
-            src: build/mac/*.dmg
+            build_cmd: npm run build-mac
 
     steps:
       - uses: actions/checkout@v4
