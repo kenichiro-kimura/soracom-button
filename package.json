@@ -47,15 +47,13 @@
       "src",
       "dist"
     ],
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "kenichiro-kimura",
-        "repo": "kenichiro-kimura/soracom-button",
-        "releaseType": "draft",
-        "publishAutoUpdate": false
-      }
-    ],
+    "publish": {
+      "provider": "github",
+      "owner": "kenichiro-kimura",
+      "repo": "kenichiro-kimura/soracom-button",
+      "releaseType": "draft",
+      "publishAutoUpdate": false
+    },
     "mac": {
       "target": "dmg",
       "icon": "img/icon.png"
