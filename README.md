@@ -1,6 +1,6 @@
 # SORACOM LTE-M Button for Enterprise Simulator
 
-This is a [SORACOM LTE-M Button for Enterprise](https://users.soracom.io/ja-jp/guides/iot-devices/lte-m-button-enterprise/) simulator applicaton works on Windows and Mac.
+This is a [SORACOM LTE-M Button for Enterprise](https://users.soracom.io/ja-jp/guides/iot-devices/lte-m-button-enterprise/) simulator application works on Windows and Mac.
 
 ## How to install 
 
