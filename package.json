@@ -1,6 +1,6 @@
 {
   "name": "soracom-button",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "",
   "main": "dist/main.js",
   "dependencies": {
@@ -51,7 +51,7 @@
       {
         "publishAutoUpdate": false
       }
-    ],    
+    ],
     "mac": {
       "target": "dmg",
       "icon": "img/icon.png"
