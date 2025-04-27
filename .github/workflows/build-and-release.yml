@@ -1,29 +1,18 @@
 name: Build and Release
 
 on:
-  push:
-    tags:
-      - 'v*'
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'src/**'
   workflow_dispatch:
 
 jobs:
-  create-release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
-          draft: true
-          prerelease: false
-
   build-and-release:
     runs-on: ${{ matrix.os }}
-    needs: create-release
     strategy:
       matrix:
         include:
@@ -44,9 +33,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Build
-        run: npm run build
 
       - name: Build and release binaries
         run: ${{ matrix.build_cmd }}
