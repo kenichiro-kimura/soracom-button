@@ -30,8 +30,6 @@ jobs:
           git push origin ${{ env.VERSION  }} --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: create tag
-        run: |
       
   build-and-release:
     runs-on: ${{ matrix.os }}
