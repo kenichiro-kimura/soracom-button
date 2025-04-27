@@ -49,6 +49,10 @@
     ],
     "publish": [
       {
+        "provider": "github",
+        "owner": "kenichiro-kimura",
+        "repo": "kenichiro-kimura/soracom-button",
+        "releaseType": "draft",
         "publishAutoUpdate": false
       }
     ],
