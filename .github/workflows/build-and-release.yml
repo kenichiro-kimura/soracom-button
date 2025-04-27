@@ -2,38 +2,13 @@ name: Build and Release
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - package.json
-      - src/**
+    tags:
+      - 'v*.*.*'
   workflow_dispatch:
 
 jobs:
-  tag:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # タグ操作には全履歴が必要
-      - name: Set up Git user
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-      - name: get version
-        id: get_version
-        run: |
-          echo "VERSION=v$(jq -r .version package.json)" >> $GITHUB_ENV
-      - name: Create or move tag
-        run: |
-          git tag -fa ${{ env.VERSION }} -m "Move tag to latest commit"
-          git push origin ${{ env.VERSION  }} --force
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
   build-and-release:
     runs-on: ${{ matrix.os }}
-    needs: tag
     strategy:
       matrix:
         include:
