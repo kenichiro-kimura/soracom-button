@@ -31,9 +31,9 @@
     "build": "tsc && npm run copy",
     "copy": "copyfiles -u 1 src/index.html src/js/**/* src/css/**/* src/img/**/* dist/",
     "start": "npm run build && electron .",
-    "build-mac": "electron-builder --mac --x64",
-    "build-win64": "electron-builder --win --x64",
-    "build-win32": "electron-builder --win --ia32",
+    "build-mac": "npm run build && electron-builder --mac --x64 --publish always",
+    "build-win64": "npm run build && electron-builder --win --x64 --publish always",
+    "build-win32": "npm run build && electron-builder --win --ia32 --publish always",
     "lint": "eslint --ext .ts ./src",
     "prepare": "husky init"
   },
@@ -47,6 +47,13 @@
       "src",
       "dist"
     ],
+    "publish": {
+      "provider": "github",
+      "owner": "kenichiro-kimura",
+      "repo": "soracom-button",
+      "releaseType": "draft",
+      "publishAutoUpdate": false
+    },
     "mac": {
       "target": "dmg",
       "icon": "img/icon.png"

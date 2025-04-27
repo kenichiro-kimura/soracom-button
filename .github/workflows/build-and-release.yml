@@ -2,28 +2,38 @@ name: Build and Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
+    paths:
+      - package.json
+      - src/**
   workflow_dispatch:
 
 jobs:
-  create-release:
+  tag:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v2
+      - uses: actions/checkout@v3
         with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
-          draft: true
-          prerelease: false
-
+          fetch-depth: 0  # タグ操作には全履歴が必要
+      - name: Set up Git user
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+      - name: get version
+        id: get_version
+        run: |
+          echo "VERSION=v$(jq -r .version package.json)" >> $GITHUB_ENV
+      - name: Create or move tag
+        run: |
+          git tag -fa ${{ env.VERSION }} -m "Move tag to latest commit"
+          git push origin ${{ env.VERSION  }} --force
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
   build-and-release:
     runs-on: ${{ matrix.os }}
-    needs: create-release
+    needs: tag
     strategy:
       matrix:
         include:
@@ -44,9 +54,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Build
-        run: npm run build
 
       - name: Build and release binaries
         run: ${{ matrix.build_cmd }}
