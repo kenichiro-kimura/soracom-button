@@ -8,6 +8,7 @@
     "electron-store": "^8.2.0",
     "i18next": "^25.0.1",
     "i18next-fs-backend": "^2.6.0",
+    "node-ffi-rs": "^1.2.10",
     "path": "^0.12.7"
   },
   "devDependencies": {
@@ -25,22 +26,22 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.0.0",
     "husky": "^9.1.7",
-    "node-ffi-rs": "^1.2.10",
     "typescript": "^5.8.3"
   },
   "scripts": {
     "build": "tsc && npm run copy",
     "copy": "copyfiles -u 1 src/index.html src/js/**/* src/css/**/* src/img/**/* dist/",
     "start": "npm run build && electron .",
-    "build-mac": "npm run build && electron-builder --mac --x64 --publish always",
-    "build-win64": "npm run build && electron-builder --win --x64 --publish always",
-    "build-win32": "npm run build && electron-builder --win --ia32 --publish always",
+    "build-mac": "npm run build && electron-builder --mac --x64",
+    "build-win64": "npm run build && electron-builder --win --x64",
+    "build-win32": "npm run build && electron-builder --win --ia32",
     "lint": "eslint --ext .ts ./src",
     "prepare": "husky init"
   },
   "author": "Kenichiro Kimura <kenichiro.kimura@gmail.com>",
   "license": "MIT",
   "build": {
+    "asar": false,
     "appId": "jp.soracom-ug.app.button",
     "files": [
       "package.json",

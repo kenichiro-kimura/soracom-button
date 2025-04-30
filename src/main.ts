@@ -9,13 +9,14 @@ import http from 'http';
 import { URL } from 'url';
 import { open, load, DataType } from 'node-ffi-rs';
 import { readFileSync } from 'fs';
+import { platform } from 'os';
 
 open({
   library: 'libsoratun', // key
-  path: "../libsoratun/lib/shared/libsoratun.dll"
+  path: path.resolve(__dirname, "libsoratun" + (platform() === 'win32' ? ".dll" : ".so"))
 });
 
-const config = readFileSync("../libsoratun/examples/nodejs/soratun.json", "utf8");
+const config = readFileSync(path.resolve(__dirname,"soratun.json"), "utf8");
 
 // IPC通信のチャネル名を定数として定義
 const IPC_CHANNELS = {
