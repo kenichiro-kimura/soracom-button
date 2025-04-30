@@ -8,15 +8,19 @@ import https from 'https';
 import http from 'http';
 import { URL } from 'url';
 import { open, load, DataType } from 'node-ffi-rs';
-import { readFileSync } from 'fs';
 import { platform } from 'os';
 
-open({
-  library: 'libsoratun', // key
-  path: path.resolve(__dirname, "libsoratun" + (platform() === 'win32' ? ".dll" : ".so"))
-});
+let hasLibSoratun = false;
 
-const config = readFileSync(path.resolve(__dirname,"soratun.json"), "utf8");
+try {
+  open({
+    library: 'libsoratun', // key
+    path: path.resolve(__dirname, "libsoratun" + (platform() === 'win32' ? ".dll" : ".so"))
+  });
+  hasLibSoratun = true;
+} catch (e) {
+  console.error('libsoratunの読み込みに失敗しました:', e);
+}
 
 // IPC通信のチャネル名を定数として定義
 const IPC_CHANNELS = {
@@ -53,6 +57,12 @@ type PrefStore = {
   udphost: string;
   language: string;
   sticker?: string;
+  privateKey?: string;
+  logLevel?: number;
+  serverPeerPublicKey?: string;
+  serverEndpoint?: string;
+  allowedIPs?: string[];
+  clientPeerIpAddress?: string;
 };
 const preference = new Store<PrefStore>();
 
@@ -63,6 +73,23 @@ preference.set('udphost', udphost);
 const language = preference.get('language') ?? 'en-US';
 preference.set('language', language);
 i18n.changeLanguage(language);
+
+const arcConfig = {
+  "privateKey": preference.get('privateKey') ?? "",
+  "logLevel": preference.get('logLevel') ?? 0,
+  "arcSessionStatus": {
+    "arcServerPeerPublicKey": preference.get('serverPeerPublicKey') ?? "",
+    "arcServerEndpoint": preference.get('serverEndpoint') ?? "",
+    "arcAllowedIPs": preference.get('allowedIPs') ?? [],
+    "arcClientPeerIpAddress": preference.get('clientPeerIpAddress') ?? ""
+  }
+};
+
+const hasArcConfig = arcConfig.privateKey !== ""
+  && arcConfig.arcSessionStatus.arcServerPeerPublicKey !== ""
+  && arcConfig.arcSessionStatus.arcServerEndpoint !== ""
+  && arcConfig.arcSessionStatus.arcAllowedIPs.length > 0
+  && arcConfig.arcSessionStatus.arcClientPeerIpAddress !== "";
 
 // メニューを準備する
 const setMenu = () => {
@@ -222,18 +249,22 @@ function setupIPCHandlers () {
         message[2] = Number(arg.batteryLevel);
         message[3] = 0x4d + Number(arg.clickType) + Number(arg.batteryLevel);
 
-        const uresult = load({
-          library: 'libsoratun',
-          funcName: 'SendUDP',
-          retType: DataType.String,
-          paramsType: [DataType.String, DataType.U8Array, DataType.I64],
-          paramsValue: [config, message, message.length]
-        });
+        if (hasLibSoratun && hasArcConfig) {
+          // libsoratunが読み込まれていて、arcConfigが設定されている場合
+          const uresult = load({
+            library: 'libsoratun',
+            funcName: 'SendUDP',
+            retType: DataType.String,
+            paramsType: [DataType.String, DataType.U8Array, DataType.I64],
+            paramsValue: [JSON.stringify(arcConfig), message, message.length]
+          });
 
-        if (uresult[0] !== '2'){
-          reject(uresult);
-        } else {
-          resolve(uresult);
+          /* 戻り値の先頭が数字の2で無い場合はデータエラー */
+          if (uresult[0] !== '2'){
+            reject(uresult);
+          } else {
+            resolve(uresult);
+          }
         }
         const timeout = setTimeout(() => {
           client.close();
