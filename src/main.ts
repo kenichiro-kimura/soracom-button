@@ -7,6 +7,15 @@ import dgram from 'dgram';
 import https from 'https';
 import http from 'http';
 import { URL } from 'url';
+import { open, load, DataType } from 'node-ffi-rs';
+import { readFileSync } from 'fs';
+
+open({
+  library: 'libsoratun', // key
+  path: "../libsoratun/lib/shared/libsoratun.dll"
+});
+
+const config = readFileSync("../libsoratun/examples/nodejs/soratun.json", "utf8");
 
 // IPC通信のチャネル名を定数として定義
 const IPC_CHANNELS = {
@@ -212,6 +221,19 @@ function setupIPCHandlers () {
         message[2] = Number(arg.batteryLevel);
         message[3] = 0x4d + Number(arg.clickType) + Number(arg.batteryLevel);
 
+        const uresult = load({
+          library: 'libsoratun',
+          funcName: 'SendUDP',
+          retType: DataType.String,
+          paramsType: [DataType.String, DataType.U8Array, DataType.I64],
+          paramsValue: [config, message, message.length]
+        });
+
+        if (uresult[0] !== '2'){
+          reject(uresult);
+        } else {
+          resolve(uresult);
+        }
         const timeout = setTimeout(() => {
           client.close();
           reject(new Error('UDP timeout'));
