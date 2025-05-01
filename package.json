@@ -34,7 +34,7 @@
     "start": "npm run build && electron .",
     "publish-mac": "npm run build && electron-builder --mac --x64 --publish always",
     "publish-win64": "npm run build && electron-builder --win --x64 --publish always",
-    "publish-win32": "npm run build && electron-builder --win --ia32--publish always",
+    "publish-win32": "npm run build && electron-builder --win --ia32 --publish always",
     "build-mac": "npm run build && electron-builder --mac --x64",
     "build-win64": "npm run build && electron-builder --win --x64",
     "build-win32": "npm run build && electron-builder --win --ia32",
