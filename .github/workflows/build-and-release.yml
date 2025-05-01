@@ -35,7 +35,7 @@ jobs:
           make libs
           cd ..
           mkdir dist
-          cp libsoratun/libs/lib/libsoratun.* dist/
+          cp libsoratun/lib/shared/libsoratun.* dist/
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
