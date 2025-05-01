@@ -21,6 +21,8 @@ Windows(32bit)の場合は`npm run build-win32`、Macの場合は`npm run build-
 
 distフォルダ以下に実行用ファイルが作成されます。
 
+libsoratunによるSORACOM Arc Integrationを利用する場合は、[libsoratun](https://github.com/kenichiro-kimura/libsoratun)をビルドし、`lib/shared/libsoratun.*`を`dist`フォルダにコピーしてから再度本プロジェクトをビルドしてください。
+
 ## 使い方
 
 ### SORACOMの準備
@@ -32,6 +34,24 @@ distフォルダ以下に実行用ファイルが作成されます。
 - [各種デバイスでSORACOM Airを使用する](https://users.soracom.io/ja-jp/guides/devices/general/)
 - [SORACOM Arc](https://users.soracom.io/ja-jp/docs/arc/)
 - [SORACOM Harvest](https://soracom.jp/services/harvest/)
+
+SORACOM Arc Integrationを利用する場合は、一度起動した後に作成される`config.json`を開き、以下の設定を追加してください。  
+`config.json`は、Windowsの場合は`%APPDATA%\soracom-button`に、Macの場合は`~/Library/Application Support/soracom-button`に作成されます。
+
+```json
+{
+  ....
+  "privateKey": "YOUR-PRIVATE-KEY",
+  "logLevel": 0,
+  "serverPeerPublicKey": "YOUR-SERVER-PUBLIC-KEY",
+  "serverEndpoint": "xxxx.arc.soracom.io:11010",
+  "allowedIPs": [
+    "100.127.0.0/21",
+    ....
+  ],,
+  "clientPeerIpAddress": "YOUR-CLIENT-PEER-IP-ADDRESS"
+}
+```
 
 ### 起動
 

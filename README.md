@@ -20,6 +20,7 @@ For Windows(32bit),use `npm run build-win32`, and for Mac, use`npm run build-mac
 
 Executable files will be created under the `dist` folder.
 
+If you want to use SORACOM Arc Integration with libsoratun, build [libsoratun](https://github.com/kenichiro-kimura/libsoratun) and copy `lib/shared/libsoratun.*` to the `dist` folder, then rebuild this project.
 
 ## How to use
 
@@ -32,6 +33,25 @@ Reference:
 - [Connection Guides](https://developers.soracom.io/en/start/#connection-guides)
 - [SORACOM Arc](https://developers.soracom.io/en/docs/arc/)
 - [SORACOM Harvest](https://developers.soracom.io/en/docs/harvest/)
+
+If you want to use SORACOM Arc Integration, after launching the application once, open the generated `config.json` file and add the following settings:
+
+```json
+{
+  ....
+  "privateKey": "YOUR-PRIVATE-KEY",
+  "logLevel": 0,
+  "serverPeerPublicKey": "YOUR-SERVER-PUBLIC-KEY",
+  "serverEndpoint": "xxxx.arc.soracom.io:11010",
+  "allowedIPs": [
+    "100.127.0.0/21",
+    ....
+  ],,
+  "clientPeerIpAddress": "YOUR-CLIENT-PEER-IP-ADDRESS"
+}
+```
+
+The `config.json` file will be created in `%APPDATA%\soracom-button` on Windows, and in `~/Library/Application Support/soracom-button` on Mac.
 
 ### Startup
 
