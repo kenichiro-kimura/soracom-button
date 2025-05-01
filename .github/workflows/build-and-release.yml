@@ -25,6 +25,10 @@ jobs:
         with:
           repository: kenichiro-kimura/libsoratun
           path: libsoratun 
+      - name: Set up go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.24.2
       - name: build libsoratun
         run: |
           cd libsoratun
