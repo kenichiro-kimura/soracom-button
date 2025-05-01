@@ -21,12 +21,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
+        with:
+          repository: kenichiro-kimura/libsoratun
+          path: libsoratun 
+      - name: build libsoratun
+        run: |
+          cd libsoratun
+          make libs
+          cd ..
+          mkdir dist
+          cp libsoratun/libs/lib/libsoratun.* dist/
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-
+          node-version: 22         
       - name: Install dependencies
         run: npm ci
 
