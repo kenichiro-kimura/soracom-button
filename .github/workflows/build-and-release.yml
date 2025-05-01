@@ -13,11 +13,11 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            build_cmd: npm run build-win64
+            build_cmd: npm run publish-win64
           - os: windows-latest
-            build_cmd: npm run build-win32
+            build_cmd: npm run publish-win32
           - os: macos-latest
-            build_cmd: npm run build-mac
+            build_cmd: npm run publish-mac
 
     steps:
       - uses: actions/checkout@v4
@@ -44,6 +44,6 @@ jobs:
         run: npm ci
 
       - name: Build and release binaries
-        run: ${{ matrix.build_cmd }} -- --publish always
+        run: ${{ matrix.build_cmd }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
