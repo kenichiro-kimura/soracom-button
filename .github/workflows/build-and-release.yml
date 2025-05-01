@@ -44,6 +44,6 @@ jobs:
         run: npm ci
 
       - name: Build and release binaries
-        run: ${{ matrix.build_cmd }} --publish always
+        run: ${{ matrix.build_cmd }} -- --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
