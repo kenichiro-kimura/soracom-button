@@ -9,13 +9,21 @@ import http from 'http';
 import { URL } from 'url';
 import { open, load, DataType } from 'node-ffi-rs';
 import { platform } from 'os';
+import { existsSync } from 'fs';
 
 let hasLibSoratun = false;
 
 try {
+  const dllName = "libsoratun" + (platform() === 'win32' ? ".dll" : ".so");
+  let dllPath = path.resolve(process.resourcesPath, "app.asar.unpacked", "dist", dllName);
+
+  if (!existsSync(dllPath)) {
+    dllPath = path.resolve(__dirname, dllName);
+  }
+
   open({
-    library: 'libsoratun', // key
-    path: path.resolve(__dirname, "libsoratun" + (platform() === 'win32' ? ".dll" : ".so"))
+    library: 'libsoratun',
+    path: dllPath
   });
   hasLibSoratun = true;
 } catch (e) {

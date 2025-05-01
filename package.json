@@ -44,7 +44,10 @@
   "author": "Kenichiro Kimura <kenichiro.kimura@gmail.com>",
   "license": "MIT",
   "build": {
-    "asar": false,
+    "asar": true,
+    "asarUnpack": [
+      "dist/libsoratun.*"
+    ],
     "appId": "jp.soracom-ug.app.button",
     "files": [
       "package.json",
