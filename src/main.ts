@@ -263,8 +263,8 @@ function setupIPCHandlers () {
             library: 'libsoratun',
             funcName: 'SendUDP',
             retType: DataType.String,
-            paramsType: [DataType.String, DataType.U8Array, DataType.I64],
-            paramsValue: [JSON.stringify(arcConfig), message, message.length]
+            paramsType: [DataType.String, DataType.U8Array, DataType.I64, DataType.I64, DataType.I64],
+            paramsValue: [JSON.stringify(arcConfig), message, message.length, UNI_PORT, UDP_TIMEOUT]
           });
 
           /* 戻り値の先頭が数字の2で無い場合はデータエラー */
