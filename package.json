@@ -18,7 +18,7 @@
     "@typescript-eslint/parser": "^8.31.0",
     "copyfiles": "^2.4.1",
     "electron": "^35.2.1",
-    "electron-builder": "^26.0.12",
+    "electron-builder": "^26.0.13",
     "eslint": "^8.13.0",
     "eslint-config-semistandard": "^17.0.0",
     "eslint-config-standard": "^17.1.0",
