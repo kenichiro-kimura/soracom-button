@@ -27,15 +27,8 @@ libsoratunによるSORACOM Arc Integrationを利用する場合は、[libsoratun
 
 ### SORACOMの準備
 
-実行するPCは、SORACOM AirまたはSORACOM Arcを用いてSORACOMプラットフォームにアクセスできるようにしておいてください。
-また、受信データを確認するために、接続に利用しているSIMの所属するSIMグループでSORACOM Harvestを有効にしておいてください。
-
-参考:
-- [各種デバイスでSORACOM Airを使用する](https://users.soracom.io/ja-jp/guides/devices/general/)
-- [SORACOM Arc](https://users.soracom.io/ja-jp/docs/arc/)
-- [SORACOM Harvest](https://soracom.jp/services/harvest/)
-
-SORACOM Arc Integrationを利用する場合はメニューの [file] > [WireGuard config] で開いた設定画面で、WireGuardの設定をそのまま貼り付けて [OK]を押してください。  
+SORACOM Arc Integration機能を利用することで、WireGuardなどを別途利用することなく、本アプリケーションだけでSORACOMプラットフォームにデータを送信することもできます。  
+メニューの [file] > [WireGuard config] で開いた設定画面で、WireGuardの設定をそのまま貼り付けて [OK]を押してください。  
 または、一度起動した後に作成される`config.json`を開き、以下の設定を追加してください。  
 `config.json`は、Windowsの場合は`%APPDATA%\soracom-button`に、Macの場合は`~/Library/Application Support/soracom-button`に作成されます。
 
@@ -53,6 +46,15 @@ SORACOM Arc Integrationを利用する場合はメニューの [file] > [WireGua
   "clientPeerIpAddress": "YOUR-CLIENT-PEER-IP-ADDRESS"
 }
 ```
+
+SORACOM Arc Integration機能を利用しない(利用できない)場合、本アプリケーションを実行するPCを、SORACOM AirまたはSORACOM Arcを用いてSORACOMプラットフォームにアクセスできるようにしておいてください。
+
+また、受信データを確認するために、接続に利用しているSIMの所属するSIMグループでSORACOM Harvestを有効にしておいてください。
+
+参考:
+- [各種デバイスでSORACOM Airを使用する](https://users.soracom.io/ja-jp/guides/devices/general/)
+- [SORACOM Arc](https://users.soracom.io/ja-jp/docs/arc/)
+- [SORACOM Harvest](https://soracom.jp/services/harvest/)
 
 ### 起動
 

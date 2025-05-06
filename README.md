@@ -26,15 +26,8 @@ If you want to use SORACOM Arc Integration with libsoratun, build [libsoratun](h
 
 ### Preparing for SORACOM
 
-Make sure that the PC you will be running on has access to the SORACOM platform using SORACOM Air or SORACOM Arc.
-Also, make sure that SORACOM Harvest is enabled in the SIM group to which the SIM used for the connection belongs in order to check the incoming data.
-
-Reference:
-- [Connection Guides](https://developers.soracom.io/en/start/#connection-guides)
-- [SORACOM Arc](https://developers.soracom.io/en/docs/arc/)
-- [SORACOM Harvest](https://developers.soracom.io/en/docs/harvest/)
-
-If you want to use SORACOM Arc Integration, open the settings screen from the menu [File] > [WireGuard config], paste the WireGuard configuration as is, and press [OK].  
+By using the SORACOM Arc Integration feature, you can send data to the SORACOM platform with just this application, without needing to use WireGuard or other tools separately.  
+Open the settings screen from the [File] > [WireGuard config] menu, paste your WireGuard configuration as is, and press [OK].  
 Alternatively, after launching the application once, open the generated `config.json` file and add the following settings:
 
 ```json
@@ -53,6 +46,15 @@ Alternatively, after launching the application once, open the generated `config.
 ```
 
 The `config.json` file will be created in `%APPDATA%\soracom-button` on Windows, and in `~/Library/Application Support/soracom-button` on Mac.
+
+If you do not use (or cannot use) the SORACOM Arc Integration feature, please make sure that the PC running this application can access the SORACOM platform using SORACOM Air or SORACOM Arc.
+
+Also, make sure that SORACOM Harvest is enabled in the SIM group to which the SIM used for the connection belongs in order to check the incoming data.
+
+Reference:
+- [Connection Guides](https://developers.soracom.io/en/start/#connection-guides)
+- [SORACOM Arc](https://developers.soracom.io/en/docs/arc/)
+- [SORACOM Harvest](https://developers.soracom.io/en/docs/harvest/)
 
 ### Startup
 
