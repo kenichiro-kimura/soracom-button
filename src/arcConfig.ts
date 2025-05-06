@@ -10,7 +10,7 @@ export class WireguardConfig {
         this.serverPeerPublicKey = serverPeerPublicKey;
         this.serverEndpoint = serverEndpoint;
         this.allowedIPs = allowedIPs;
-        this.clientPeerIpAddress = clientPeerIpAddress;
+        this.clientPeerIpAddress = clientPeerIpAddress.split('/')[0];
     }
 
     static fromConfigText = (text: string): WireguardConfig => {
@@ -23,11 +23,11 @@ export class WireguardConfig {
       
         for (const line of lines) {
           if (line.startsWith('PrivateKey')) {
-            privateKey = line.split('=')[1].trim();
+            privateKey = line.split('=').slice(1).join('=').trim();
           } else if (line.startsWith('Address')) {
-            clientPeerIpAddress = line.split('=')[1].trim().replace(/,.*/, '');
+            clientPeerIpAddress = line.split('=')[1].split('/')[0].trim().replace(/,.*/, '');
           } else if (line.startsWith('PublicKey')) {
-            serverPeerPublicKey = line.split('=')[1].trim();
+            serverPeerPublicKey = line.split('=').slice(1).join('=').trim();
           } else if (line.startsWith('AllowedIPs')) {
             allowedIPs = line.split('=')[1].split(',').map(ip => ip.trim());
           } else if (line.startsWith('Endpoint')) {
