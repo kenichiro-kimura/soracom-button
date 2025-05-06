@@ -34,7 +34,8 @@ Reference:
 - [SORACOM Arc](https://developers.soracom.io/en/docs/arc/)
 - [SORACOM Harvest](https://developers.soracom.io/en/docs/harvest/)
 
-If you want to use SORACOM Arc Integration, after launching the application once, open the generated `config.json` file and add the following settings:
+If you want to use SORACOM Arc Integration, open the settings screen from the menu [File] > [WireGuard config], paste the WireGuard configuration as is, and press [OK].  
+Alternatively, after launching the application once, open the generated `config.json` file and add the following settings:
 
 ```json
 {

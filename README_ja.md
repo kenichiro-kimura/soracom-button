@@ -35,7 +35,8 @@ libsoratunによるSORACOM Arc Integrationを利用する場合は、[libsoratun
 - [SORACOM Arc](https://users.soracom.io/ja-jp/docs/arc/)
 - [SORACOM Harvest](https://soracom.jp/services/harvest/)
 
-SORACOM Arc Integrationを利用する場合は、一度起動した後に作成される`config.json`を開き、以下の設定を追加してください。  
+SORACOM Arc Integrationを利用する場合はメニューの [file] > [WireGuard config] で開いた設定画面で、WireGuardの設定をそのまま貼り付けて [OK]を押してください。  
+または、一度起動した後に作成される`config.json`を開き、以下の設定を追加してください。  
 `config.json`は、Windowsの場合は`%APPDATA%\soracom-button`に、Macの場合は`~/Library/Application Support/soracom-button`に作成されます。
 
 ```json
