@@ -41,3 +41,8 @@ const api = {
 
 // レンダラープロセスにAPIを公開
 contextBridge.exposeInMainWorld('api', api);
+contextBridge.exposeInMainWorld('electronAPI', {
+  getWireguardConfigText: () => ipcRenderer.invoke('get-wireguard-config-text'),
+  closeWireguardConfigWindow: () => ipcRenderer.send('close-wireguard-config-window'),
+  saveWireguardConfig: (text: string) => ipcRenderer.send('save-wireguard-config', text)
+});

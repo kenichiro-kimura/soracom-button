@@ -1,5 +1,6 @@
 {
     "file": "文件",
+    "wireGuard config": "WireGuard 配置",
     "view": "查看",
     "help": "帮助",
     "exit": "退出",

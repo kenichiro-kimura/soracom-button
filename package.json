@@ -30,7 +30,7 @@
   },
   "scripts": {
     "build": "tsc && npm run copy",
-    "copy": "copyfiles -u 1 src/index.html src/js/**/* src/css/**/* src/img/**/* dist/",
+    "copy": "copyfiles -u 1 src/index.html src/config.html src/js/**/* src/css/**/* src/img/**/* src/languages/**/* dist/",
     "start": "npm run build && electron .",
     "publish-mac": "npm run build && electron-builder --mac --arm64 --publish always",
     "publish-win64": "npm run build && electron-builder --win --x64 --publish always",

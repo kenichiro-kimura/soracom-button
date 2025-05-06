@@ -2,6 +2,7 @@
 import path from 'path';
 import Store from 'electron-store';
 import { app, shell, Menu, BrowserWindow, ipcMain, MenuItemConstructorOptions, BrowserWindowConstructorOptions } from 'electron';
+import { WireguardConfig, ArcConfig } from './arcConfig';
 import i18n from './i18n';
 import dgram from 'dgram';
 import https from 'https';
@@ -82,22 +83,17 @@ const language = preference.get('language') ?? 'en-US';
 preference.set('language', language);
 i18n.changeLanguage(language);
 
-const arcConfig = {
-  "privateKey": preference.get('privateKey') ?? "",
-  "logLevel": preference.get('logLevel') ?? 0,
-  "arcSessionStatus": {
-    "arcServerPeerPublicKey": preference.get('serverPeerPublicKey') ?? "",
-    "arcServerEndpoint": preference.get('serverEndpoint') ?? "",
-    "arcAllowedIPs": preference.get('allowedIPs') ?? [],
-    "arcClientPeerIpAddress": preference.get('clientPeerIpAddress') ?? ""
-  }
-};
+const wireguardConfig: WireguardConfig = 
+ new WireguardConfig(
+  preference.get('privateKey') ?? "",
+  preference.get('serverPeerPublicKey') ?? "",
+  preference.get('serverEndpoint') ?? "",
+  preference.get('allowedIPs') ?? [],
+  preference.get('clientPeerIpAddress') ?? ""
+);
 
-const hasArcConfig = arcConfig.privateKey !== ""
-  && arcConfig.arcSessionStatus.arcServerPeerPublicKey !== ""
-  && arcConfig.arcSessionStatus.arcServerEndpoint !== ""
-  && arcConfig.arcSessionStatus.arcAllowedIPs.length > 0
-  && arcConfig.arcSessionStatus.arcClientPeerIpAddress !== "";
+let arcConfig: ArcConfig = ArcConfig.fromWireguardConfig(wireguardConfig);
+arcConfig.logLevel = preference.get('logLevel') ?? 0;
 
 // メニューを準備する
 const setMenu = () => {
@@ -105,6 +101,10 @@ const setMenu = () => {
     {
       label: i18n.t('file'),
       submenu: [
+        {
+          label: i18n.t('wireGuard config'),
+          click: () => { openWireGuardConfigWindow(); }
+        },
         { role: 'close', label: i18n.t('exit') }
       ]
     },
@@ -257,7 +257,7 @@ function setupIPCHandlers () {
         message[2] = Number(arg.batteryLevel);
         message[3] = 0x4d + Number(arg.clickType) + Number(arg.batteryLevel);
 
-        if (hasLibSoratun && hasArcConfig) {
+        if (hasLibSoratun && arcConfig.hasArcConfig()) {
           // libsoratunが読み込まれていて、arcConfigが設定されている場合
           const uresult = load({
             library: 'libsoratun',
@@ -381,6 +381,7 @@ const setSticker = (label: string) => {
 const changeLanguage = (newLanguage: string) => {
   preference.set('language', newLanguage);
   i18n.changeLanguage(newLanguage);
+  console.log('Language changed to:', newLanguage);
 
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send(IPC_CHANNELS.SET_LABEL);
@@ -408,6 +409,63 @@ const resize = (size: 'large' | 'middle' | 'small') => {
 
   mainWindow.webContents.send(IPC_CHANNELS.SET_WINDOW_SIZE, size);
 };
+
+// WireGuard設定用サブウインドウを開く関数
+function openWireGuardConfigWindow() {
+  let configWindow: BrowserWindow | null = new BrowserWindow({
+    width: 600,
+    height: 400,
+    title: 'WireGuard Config',
+    parent: mainWindow || undefined,
+    modal: true,
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.resolve(__dirname, 'preload.js')
+    }
+  });
+
+  // メニューを非表示にする
+  configWindow.setMenu(null);
+
+  configWindow.loadFile(path.resolve(__dirname, 'config.html'));
+
+  // 初期値取得用IPCハンドラを一時登録
+  ipcMain.handleOnce('get-wireguard-config-text', () => {
+    return wireguardConfig.configText();
+  });
+
+  // イベントハンドラ
+  const closeHandler = () => {
+    if (configWindow) configWindow.close();
+    configWindow = null;
+  };
+  ipcMain.once('close-wireguard-config-window', closeHandler);
+
+  ipcMain.once('save-wireguard-config', (_event, text: string) => {
+    try {
+      const newConfig = WireguardConfig.fromConfigText(text);
+      preference.set('privateKey', newConfig.privateKey);
+      preference.set('serverPeerPublicKey', newConfig.serverPeerPublicKey);
+      preference.set('serverEndpoint', newConfig.serverEndpoint);
+      preference.set('allowedIPs', newConfig.allowedIPs);
+      preference.set('clientPeerIpAddress', newConfig.clientPeerIpAddress);
+      arcConfig = ArcConfig.fromWireguardConfig(newConfig);
+      arcConfig.logLevel = preference.get('logLevel') ?? 0;
+      closeHandler();
+    } catch (e) {
+      if (configWindow) {
+        configWindow.webContents.executeJavaScript(
+          `alert('Failed to parse WireGuard config: ' + ${JSON.stringify(String(e))})`
+        );
+      }
+    }
+  });
+
+  configWindow.on('closed', () => {
+    configWindow = null;
+  });
+}
 
 // MacOSでのアプリケーションライフサイクル対応
 app.on('activate', () => {
