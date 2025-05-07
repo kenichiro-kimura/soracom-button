@@ -28,7 +28,7 @@ libsoratunによるSORACOM Arc Integrationを利用する場合は、[libsoratun
 ### SORACOMの準備
 
 SORACOM Arc Integration機能を利用することで、WireGuardなどを別途利用することなく、本アプリケーションだけでSORACOMプラットフォームにデータを送信することもできます。  
-メニューの [file] > [WireGuard config] で開いた設定画面で、WireGuardの設定をそのまま貼り付けて [OK]を押してください。  
+既存または新規で作成したSORACOM ArcのバーチャルSIMのWireGuard設定を取得し、メニューの [file] > [WireGuard config] で開いた設定画面でそのまま貼り付けて [OK]を押してください。  
 または、一度起動した後に作成される`config.json`を開き、以下の設定を追加してください。  
 `config.json`は、Windowsの場合は`%APPDATA%\soracom-button`に、Macの場合は`~/Library/Application Support/soracom-button`に作成されます。
 

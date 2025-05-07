@@ -27,7 +27,7 @@ If you want to use SORACOM Arc Integration with libsoratun, build [libsoratun](h
 ### Preparing for SORACOM
 
 By using the SORACOM Arc Integration feature, you can send data to the SORACOM platform with just this application, without needing to use WireGuard or other tools separately.  
-Open the settings screen from the [File] > [WireGuard config] menu, paste your WireGuard configuration as is, and press [OK].  
+Obtain the WireGuard configuration of an existing or newly created SORACOM Arc virtual SIM, open the settings screen from the [File] > [WireGuard config] menu, paste the configuration as is, and press [OK].  
 Alternatively, after launching the application once, open the generated `config.json` file and add the following settings:
 
 ```json
