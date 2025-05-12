@@ -21,11 +21,34 @@ Windows(32bit)の場合は`npm run build-win32`、Macの場合は`npm run build-
 
 distフォルダ以下に実行用ファイルが作成されます。
 
+libsoratunによるSORACOM Arc Integrationを利用する場合は、[libsoratun](https://github.com/kenichiro-kimura/libsoratun)をビルドし、`lib/shared/libsoratun.*`を`dist`フォルダにコピーしてから再度本プロジェクトをビルドしてください。
+
 ## 使い方
 
 ### SORACOMの準備
 
-実行するPCは、SORACOM AirまたはSORACOM Arcを用いてSORACOMプラットフォームにアクセスできるようにしておいてください。
+SORACOM Arc Integration機能を利用することで、WireGuardなどを別途利用することなく、本アプリケーションだけでSORACOMプラットフォームにデータを送信することもできます。  
+既存または新規で作成したSORACOM ArcのバーチャルSIMのWireGuard設定を取得し、メニューの [file] > [WireGuard config] で開いた設定画面でそのまま貼り付けて [OK]を押してください。  
+または、一度起動した後に作成される`config.json`を開き、以下の設定を追加してください。  
+`config.json`は、Windowsの場合は`%APPDATA%\soracom-button`に、Macの場合は`~/Library/Application Support/soracom-button`に作成されます。
+
+```json
+{
+  ....
+  "privateKey": "YOUR-PRIVATE-KEY",
+  "logLevel": 0,
+  "serverPeerPublicKey": "YOUR-SERVER-PUBLIC-KEY",
+  "serverEndpoint": "xxxx.arc.soracom.io:11010",
+  "allowedIPs": [
+    "100.127.0.0/21",
+    ....
+  ],,
+  "clientPeerIpAddress": "YOUR-CLIENT-PEER-IP-ADDRESS"
+}
+```
+
+SORACOM Arc Integration機能を利用しない(利用できない)場合、本アプリケーションを実行するPCを、SORACOM AirまたはSORACOM Arcを用いてSORACOMプラットフォームにアクセスできるようにしておいてください。
+
 また、受信データを確認するために、接続に利用しているSIMの所属するSIMグループでSORACOM Harvestを有効にしておいてください。
 
 参考:

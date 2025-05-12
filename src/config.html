@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WireGuard Config</title>
+  <style>
+    body { font-family: sans-serif; margin: 16px; }
+    textarea { width: 100%; height: 200px; font-family: monospace; }
+    .buttons { margin-top: 12px; text-align: right; }
+    button { margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <h2>Edit WireGuard Config</h2>
+  <textarea id="configArea"></textarea>
+  <div class="buttons">
+    <button id="cancelBtn">Cancel</button>
+    <button id="okBtn">OK</button>
+  </div>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      window.electronAPI.getWireguardConfigText().then(text => {
+        document.getElementById('configArea').value = text || '';
+      });
+      window.api.getI18NMessage('wireGuard config').then(message => {
+        document.querySelector('h2').textContent = message;
+      });
+    });
+    document.getElementById('cancelBtn').onclick = () => {
+      window.electronAPI.closeWireguardConfigWindow();
+    };
+    document.getElementById('okBtn').onclick = () => {
+      const text = document.getElementById('configArea').value;
+      window.electronAPI.saveWireguardConfig(text);
+    };
+  </script>
+</body>
+</html>

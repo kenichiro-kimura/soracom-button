@@ -2,11 +2,44 @@
 import path from 'path';
 import Store from 'electron-store';
 import { app, shell, Menu, BrowserWindow, ipcMain, MenuItemConstructorOptions, BrowserWindowConstructorOptions } from 'electron';
+import { WireguardConfig, ArcConfig } from './arcConfig';
 import i18n from './i18n';
 import dgram from 'dgram';
 import https from 'https';
 import http from 'http';
 import { URL } from 'url';
+import { open, load, DataType } from 'node-ffi-rs';
+import { platform } from 'os';
+import { existsSync } from 'fs';
+
+let hasLibSoratun = false;
+
+const languages = [
+  'en-US',
+  'ja-JP',
+  'zh-CN',
+  'ko-KR',
+  'es-ES',
+  'de-DE',
+  'fr-FR'
+];
+
+try {
+  const dllName = "libsoratun" + (platform() === 'win32' ? ".dll" : ".so");
+  let dllPath = path.resolve(process.resourcesPath, "app.asar.unpacked", "dist", dllName);
+
+  if (!existsSync(dllPath)) {
+    dllPath = path.resolve(__dirname, dllName);
+  }
+
+  open({
+    library: 'libsoratun',
+    path: dllPath
+  });
+  hasLibSoratun = true;
+} catch (e) {
+  console.error('libsoratunの読み込みに失敗しました:', e);
+}
 
 // IPC通信のチャネル名を定数として定義
 const IPC_CHANNELS = {
@@ -43,6 +76,12 @@ type PrefStore = {
   udphost: string;
   language: string;
   sticker?: string;
+  privateKey?: string;
+  logLevel?: number;
+  serverPeerPublicKey?: string;
+  serverEndpoint?: string;
+  allowedIPs?: string[];
+  clientPeerIpAddress?: string;
 };
 const preference = new Store<PrefStore>();
 
@@ -54,12 +93,28 @@ const language = preference.get('language') ?? 'en-US';
 preference.set('language', language);
 i18n.changeLanguage(language);
 
+let wireguardConfig: WireguardConfig = 
+ new WireguardConfig(
+  preference.get('privateKey') ?? "",
+  preference.get('serverPeerPublicKey') ?? "",
+  preference.get('serverEndpoint') ?? "",
+  preference.get('allowedIPs') ?? [],
+  preference.get('clientPeerIpAddress') ?? ""
+);
+
+let arcConfig: ArcConfig = ArcConfig.fromWireguardConfig(wireguardConfig)
+                                    .setLogLevel(preference.get('logLevel') ?? 0);
+
 // メニューを準備する
 const setMenu = () => {
   const template: MenuItemConstructorOptions[] = [
     {
       label: i18n.t('file'),
       submenu: [
+        {
+          label: i18n.t('wireGuard config'),
+          click: () => { openWireGuardConfigWindow(); }
+        },
         { role: 'close', label: i18n.t('exit') }
       ]
     },
@@ -98,37 +153,13 @@ const setMenu = () => {
         },
         {
           label: i18n.t('language'),
-          submenu: [
-            {
-              label: i18n.t('en-US'),
-              click: () => { changeLanguage('en-US'); }
-            },
-            {
-              label: i18n.t('ja-JP'),
-              click: () => { changeLanguage('ja-JP'); }
-            },
-            {
-              label: i18n.t('zh-CN'),
-              click: () => { changeLanguage('zh-CN'); }
-            },
-            {
-              label: i18n.t('ko-KR'),
-              click: () => { changeLanguage('ko-KR'); }
-            },
-            {
-              label: i18n.t('es-ES'),
-              click: () => { changeLanguage('es-ES'); }
-            },
-            {
-              label: i18n.t('de-DE'),
-              click: () => { changeLanguage('de-DE'); }
-            },
-            {
-              label: i18n.t('fr-FR'),
-              click: () => { changeLanguage('fr-FR'); }
-            }
-          ]
-        }
+          // submenuはlanguagesの全ての言語に対して以下の形のオブジェクトを生成した配列とする
+          // { label: i18n.t('ja-JP'), click: () => { changeLanguage('ja-JP'); } }
+          submenu: languages.map((lang) => ({
+            label: i18n.t(lang),
+            click: () => { changeLanguage(lang); }
+          }))
+        },
       ]
     },
     {
@@ -212,6 +243,24 @@ function setupIPCHandlers () {
         message[2] = Number(arg.batteryLevel);
         message[3] = 0x4d + Number(arg.clickType) + Number(arg.batteryLevel);
 
+        if (hasLibSoratun && arcConfig.hasArcConfig()) {
+          // libsoratunが読み込まれていて、arcConfigが設定されている場合
+          // タイムアウトはlibsoratun側で設定されているので、setTimeoutは不要
+          const uresult = load({
+            library: 'libsoratun',
+            funcName: 'SendUDP',
+            retType: DataType.String,
+            paramsType: [DataType.String, DataType.U8Array, DataType.I64, DataType.I64, DataType.I64],
+            paramsValue: [JSON.stringify(arcConfig), message, message.length, UNI_PORT, UDP_TIMEOUT]
+          });
+
+          /* 戻り値の先頭が数字の2で無い場合はデータエラー */
+          if (uresult[0] !== '2'){
+            reject(uresult);
+          } else {
+            resolve(uresult);
+          }
+        }
         const timeout = setTimeout(() => {
           client.close();
           reject(new Error('UDP timeout'));
@@ -319,6 +368,7 @@ const setSticker = (label: string) => {
 const changeLanguage = (newLanguage: string) => {
   preference.set('language', newLanguage);
   i18n.changeLanguage(newLanguage);
+  console.log('Language changed to:', newLanguage);
 
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send(IPC_CHANNELS.SET_LABEL);
@@ -346,6 +396,64 @@ const resize = (size: 'large' | 'middle' | 'small') => {
 
   mainWindow.webContents.send(IPC_CHANNELS.SET_WINDOW_SIZE, size);
 };
+
+// WireGuard設定用サブウインドウを開く関数
+function openWireGuardConfigWindow() {
+  let configWindow: BrowserWindow | null = new BrowserWindow({
+    width: 600,
+    height: 400,
+    title: 'WireGuard Config',
+    parent: mainWindow || undefined,
+    modal: true,
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.resolve(__dirname, 'preload.js')
+    }
+  });
+
+  // メニューを非表示にする
+  configWindow.setMenu(null);
+
+  configWindow.loadFile(path.resolve(__dirname, 'config.html'));
+
+  // 初期値取得用IPCハンドラを一時登録
+  ipcMain.handleOnce('get-wireguard-config-text', () => {
+    return wireguardConfig.configText();
+  });
+
+  // イベントハンドラ
+  const closeHandler = () => {
+    if (configWindow) configWindow.close();
+    configWindow = null;
+  };
+  ipcMain.once('close-wireguard-config-window', closeHandler);
+
+  ipcMain.once('save-wireguard-config', (_event, text: string) => {
+    try {
+      // wireguardConfigとarcConfigを更新
+      wireguardConfig = WireguardConfig.fromConfigText(text);
+      arcConfig = ArcConfig.fromWireguardConfig(wireguardConfig)
+                           .setLogLevel(preference.get('logLevel') ?? 0);
+      preference.set('privateKey', wireguardConfig.privateKey);
+      preference.set('serverPeerPublicKey', wireguardConfig.serverPeerPublicKey);
+      preference.set('serverEndpoint', wireguardConfig.serverEndpoint);
+      preference.set('allowedIPs', wireguardConfig.allowedIPs);
+      preference.set('clientPeerIpAddress', wireguardConfig.clientPeerIpAddress);
+      closeHandler();
+    } catch (e) {
+      if (configWindow) {
+        configWindow.webContents.executeJavaScript(
+          `alert('Failed to parse WireGuard config: ' + ${JSON.stringify(String(e))})`
+        );
+      }
+    }
+  });
+
+  configWindow.on('closed', () => {
+    configWindow = null;
+  });
+}
 
 // MacOSでのアプリケーションライフサイクル対応
 app.on('activate', () => {

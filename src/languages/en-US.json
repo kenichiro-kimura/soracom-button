@@ -1,5 +1,6 @@
 {
     "file": "File",
+    "wireGuard config": "WireGuard configuration",
     "view": "View",
     "help": "Help",
     "exit": "exit",

@@ -1,6 +1,6 @@
 {
   "name": "soracom-button",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "",
   "main": "dist/main.js",
   "dependencies": {
@@ -8,6 +8,7 @@
     "electron-store": "^8.2.0",
     "i18next": "^25.0.1",
     "i18next-fs-backend": "^2.6.0",
+    "node-ffi-rs": "^1.2.10",
     "path": "^0.12.7"
   },
   "devDependencies": {
@@ -17,7 +18,7 @@
     "@typescript-eslint/parser": "^8.31.0",
     "copyfiles": "^2.4.1",
     "electron": "^35.2.1",
-    "electron-builder": "^26.0.12",
+    "electron-builder": "^26.0.13",
     "eslint": "^8.13.0",
     "eslint-config-semistandard": "^17.0.0",
     "eslint-config-standard": "^17.1.0",
@@ -29,17 +30,24 @@
   },
   "scripts": {
     "build": "tsc && npm run copy",
-    "copy": "copyfiles -u 1 src/index.html src/js/**/* src/css/**/* src/img/**/* dist/",
+    "copy": "copyfiles -u 1 src/index.html src/config.html src/js/**/* src/css/**/* src/img/**/* src/languages/**/* dist/",
     "start": "npm run build && electron .",
-    "build-mac": "npm run build && electron-builder --mac --x64 --publish always",
-    "build-win64": "npm run build && electron-builder --win --x64 --publish always",
-    "build-win32": "npm run build && electron-builder --win --ia32 --publish always",
+    "publish-mac": "npm run build && electron-builder --mac --arm64 --publish always",
+    "publish-win64": "npm run build && electron-builder --win --x64 --publish always",
+    "publish-win32": "npm run build && electron-builder --win --ia32 --publish always",
+    "build-mac": "npm run build && electron-builder --mac --arm64",
+    "build-win64": "npm run build && electron-builder --win --x64",
+    "build-win32": "npm run build && electron-builder --win --ia32",
     "lint": "eslint --ext .ts ./src",
     "prepare": "husky init"
   },
   "author": "Kenichiro Kimura <kenichiro.kimura@gmail.com>",
   "license": "MIT",
   "build": {
+    "asar": true,
+    "asarUnpack": [
+      "dist/libsoratun.*"
+    ],
     "appId": "jp.soracom-ug.app.button",
     "files": [
       "package.json",

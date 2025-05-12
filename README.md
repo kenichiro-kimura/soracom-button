@@ -20,12 +20,35 @@ For Windows(32bit),use `npm run build-win32`, and for Mac, use`npm run build-mac
 
 Executable files will be created under the `dist` folder.
 
+If you want to use SORACOM Arc Integration with libsoratun, build [libsoratun](https://github.com/kenichiro-kimura/libsoratun) and copy `lib/shared/libsoratun.*` to the `dist` folder, then rebuild this project.
 
 ## How to use
 
 ### Preparing for SORACOM
 
-Make sure that the PC you will be running on has access to the SORACOM platform using SORACOM Air or SORACOM Arc.
+By using the SORACOM Arc Integration feature, you can send data to the SORACOM platform with just this application, without needing to use WireGuard or other tools separately.  
+Obtain the WireGuard configuration of an existing or newly created SORACOM Arc virtual SIM, open the settings screen from the [File] > [WireGuard config] menu, paste the configuration as is, and press [OK].  
+Alternatively, after launching the application once, open the generated `config.json` file and add the following settings:
+
+```json
+{
+  ....
+  "privateKey": "YOUR-PRIVATE-KEY",
+  "logLevel": 0,
+  "serverPeerPublicKey": "YOUR-SERVER-PUBLIC-KEY",
+  "serverEndpoint": "xxxx.arc.soracom.io:11010",
+  "allowedIPs": [
+    "100.127.0.0/21",
+    ....
+  ],,
+  "clientPeerIpAddress": "YOUR-CLIENT-PEER-IP-ADDRESS"
+}
+```
+
+The `config.json` file will be created in `%APPDATA%\soracom-button` on Windows, and in `~/Library/Application Support/soracom-button` on Mac.
+
+If you do not use (or cannot use) the SORACOM Arc Integration feature, please make sure that the PC running this application can access the SORACOM platform using SORACOM Air or SORACOM Arc.
+
 Also, make sure that SORACOM Harvest is enabled in the SIM group to which the SIM used for the connection belongs in order to check the incoming data.
 
 Reference:

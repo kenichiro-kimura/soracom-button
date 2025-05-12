@@ -1,5 +1,6 @@
 {
     "file": "Archivo",
+    "wireGuard config": "Configuración de WireGuard",
     "view": "Vista",
     "help": "Ayuda",
     "exit": "Salir",
