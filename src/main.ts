@@ -14,6 +14,16 @@ import { existsSync } from 'fs';
 
 let hasLibSoratun = false;
 
+const languages = [
+  'en-US',
+  'ja-JP',
+  'zh-CN',
+  'ko-KR',
+  'es-ES',
+  'de-DE',
+  'fr-FR'
+];
+
 try {
   const dllName = "libsoratun" + (platform() === 'win32' ? ".dll" : ".so");
   let dllPath = path.resolve(process.resourcesPath, "app.asar.unpacked", "dist", dllName);
@@ -83,7 +93,7 @@ const language = preference.get('language') ?? 'en-US';
 preference.set('language', language);
 i18n.changeLanguage(language);
 
-const wireguardConfig: WireguardConfig = 
+let wireguardConfig: WireguardConfig = 
  new WireguardConfig(
   preference.get('privateKey') ?? "",
   preference.get('serverPeerPublicKey') ?? "",
@@ -92,8 +102,8 @@ const wireguardConfig: WireguardConfig =
   preference.get('clientPeerIpAddress') ?? ""
 );
 
-let arcConfig: ArcConfig = ArcConfig.fromWireguardConfig(wireguardConfig);
-arcConfig.logLevel = preference.get('logLevel') ?? 0;
+let arcConfig: ArcConfig = ArcConfig.fromWireguardConfig(wireguardConfig)
+                                    .setLogLevel(preference.get('logLevel') ?? 0);
 
 // メニューを準備する
 const setMenu = () => {
@@ -143,37 +153,13 @@ const setMenu = () => {
         },
         {
           label: i18n.t('language'),
-          submenu: [
-            {
-              label: i18n.t('en-US'),
-              click: () => { changeLanguage('en-US'); }
-            },
-            {
-              label: i18n.t('ja-JP'),
-              click: () => { changeLanguage('ja-JP'); }
-            },
-            {
-              label: i18n.t('zh-CN'),
-              click: () => { changeLanguage('zh-CN'); }
-            },
-            {
-              label: i18n.t('ko-KR'),
-              click: () => { changeLanguage('ko-KR'); }
-            },
-            {
-              label: i18n.t('es-ES'),
-              click: () => { changeLanguage('es-ES'); }
-            },
-            {
-              label: i18n.t('de-DE'),
-              click: () => { changeLanguage('de-DE'); }
-            },
-            {
-              label: i18n.t('fr-FR'),
-              click: () => { changeLanguage('fr-FR'); }
-            }
-          ]
-        }
+          // submenuはlanguagesの全ての言語に対して以下の形のオブジェクトを生成した配列とする
+          // { label: i18n.t('ja-JP'), click: () => { changeLanguage('ja-JP'); } }
+          submenu: languages.map((lang) => ({
+            label: i18n.t(lang),
+            click: () => { changeLanguage(lang); }
+          }))
+        },
       ]
     },
     {
@@ -259,6 +245,7 @@ function setupIPCHandlers () {
 
         if (hasLibSoratun && arcConfig.hasArcConfig()) {
           // libsoratunが読み込まれていて、arcConfigが設定されている場合
+          // タイムアウトはlibsoratun側で設定されているので、setTimeoutは不要
           const uresult = load({
             library: 'libsoratun',
             funcName: 'SendUDP',
@@ -444,14 +431,15 @@ function openWireGuardConfigWindow() {
 
   ipcMain.once('save-wireguard-config', (_event, text: string) => {
     try {
-      const newConfig = WireguardConfig.fromConfigText(text);
-      preference.set('privateKey', newConfig.privateKey);
-      preference.set('serverPeerPublicKey', newConfig.serverPeerPublicKey);
-      preference.set('serverEndpoint', newConfig.serverEndpoint);
-      preference.set('allowedIPs', newConfig.allowedIPs);
-      preference.set('clientPeerIpAddress', newConfig.clientPeerIpAddress);
-      arcConfig = ArcConfig.fromWireguardConfig(newConfig);
-      arcConfig.logLevel = preference.get('logLevel') ?? 0;
+      // wireguardConfigとarcConfigを更新
+      wireguardConfig = WireguardConfig.fromConfigText(text);
+      arcConfig = ArcConfig.fromWireguardConfig(wireguardConfig)
+                           .setLogLevel(preference.get('logLevel') ?? 0);
+      preference.set('privateKey', wireguardConfig.privateKey);
+      preference.set('serverPeerPublicKey', wireguardConfig.serverPeerPublicKey);
+      preference.set('serverEndpoint', wireguardConfig.serverEndpoint);
+      preference.set('allowedIPs', wireguardConfig.allowedIPs);
+      preference.set('clientPeerIpAddress', wireguardConfig.clientPeerIpAddress);
       closeHandler();
     } catch (e) {
       if (configWindow) {

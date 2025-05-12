@@ -1,9 +1,9 @@
 export class WireguardConfig {
-    privateKey: string;
-    serverPeerPublicKey: string;
-    serverEndpoint: string;
-    allowedIPs: string[];
-    clientPeerIpAddress: string;
+    readonly privateKey: string;
+    readonly serverPeerPublicKey: string;
+    readonly serverEndpoint: string;
+    readonly allowedIPs: string[];
+    readonly clientPeerIpAddress: string;
 
     constructor(privateKey: string, serverPeerPublicKey: string, serverEndpoint: string, allowedIPs: string[], clientPeerIpAddress: string) {
         this.privateKey = privateKey;
@@ -58,9 +58,9 @@ Endpoint = ${this.serverEndpoint}
 }
 
 export class ArcConfig {
-    privateKey: string;
-    logLevel: number;
-    arcSessionStatus: {
+    readonly privateKey: string;
+    readonly logLevel: number;
+    readonly arcSessionStatus: {
         arcServerPeerPublicKey: string;
         arcServerEndpoint: string;
         arcAllowedIPs: string[];
@@ -97,4 +97,14 @@ export class ArcConfig {
           && this.arcSessionStatus.arcClientPeerIpAddress !== "";
       }
       
+    setLogLevel = (logLevel: number): ArcConfig => {
+        return new ArcConfig(
+            this.privateKey,
+            logLevel,
+            this.arcSessionStatus.arcServerPeerPublicKey,
+            this.arcSessionStatus.arcServerEndpoint,
+            this.arcSessionStatus.arcAllowedIPs,
+            this.arcSessionStatus.arcClientPeerIpAddress
+        );
+    }
 }
