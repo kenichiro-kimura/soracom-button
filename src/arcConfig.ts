@@ -22,6 +22,7 @@ export class WireguardConfig {
         let allowedIPs: string[] = [];
       
         for (const line of lines) {
+          /* privatekeyとpublickeyは値に'='が含まれる場合があるので、split後に配列1番以降をjoinする */
           if (line.startsWith('PrivateKey')) {
             privateKey = line.split('=').slice(1).join('=').trim();
           } else if (line.startsWith('Address')) {
