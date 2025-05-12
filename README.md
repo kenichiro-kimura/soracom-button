@@ -101,7 +101,13 @@ Select [View] > [Size] > [Large/Middle/Smaill] to change the size of button.
 
 ![](img/app-image-ug.png)
 
-# Contact us
+## Acknowledgements
+
+I would like to express our deepest gratitude to [0x6b](https://github.com/0x6b/), the developer of the libsoratun library, for making SORACOM Arc Integration possible.  
+Thanks to this library, it became easy and secure to connect to SORACOM Arc from the application.  
+We sincerely appreciate your contribution.
+
+## Contact us
 
 If you tweet on Twitter with the hashtag `#soracomug`, the author or some member from SORACOM UserGroup will probably respond, but it's best effort, so please be patient for the answer.
 

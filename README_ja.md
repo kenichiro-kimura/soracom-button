@@ -102,7 +102,13 @@ SORACOM Arc Integration機能を利用しない(利用できない)場合、本�
 
 ![](img/app-image-ug.png)
 
-# お問い合わせ
+## 謝辞
+
+SORACOM Arc Integrationの実現にあたり、[0x6b](https://github.com/0x6b/)氏が開発されたlibsoratunライブラリに多大な恩恵を受けました。  
+このライブラリのおかげで、アプリケーションから簡単にSORACOM Arcへの接続が可能となりました。  
+心より感謝申し上げます。
+
+## お問い合わせ
 
 Twitterでハッシュタグ`#soracomug`をつけて呟くと作者かSORACOM UGの人が反応すると思いますがベストエフォートになりますので回答は気長に待ってください。
 
