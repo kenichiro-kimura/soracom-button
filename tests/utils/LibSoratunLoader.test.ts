@@ -90,7 +90,7 @@ describe('LibSoratunLoader', () => {
     const callArgs = (nodeFfiRs.open as jest.Mock).mock.calls[0][0];
     expect(callArgs.library).toBe('libsoratun');
     // パス形式の検証には完全一致ではなく、含まれているかどうかをチェック
-    expect(callArgs.path).toContain('libsoratun.dll');
+    expect(callArgs.path).toContain('../libsoratun.dll');
     
     expect(loader.loaded).toBe(true);
   });
