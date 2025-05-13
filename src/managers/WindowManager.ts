@@ -154,9 +154,7 @@ export class WindowManager {
         closeHandler();
       } catch (e) {
         if (configWindow) {
-          configWindow.webContents.executeJavaScript(
-            `alert('Failed to parse WireGuard config: ' + ${JSON.stringify(String(e))})`
-          );
+          console.log('Failed to parse WireGuard config: ' + e);
         }
       }
     });

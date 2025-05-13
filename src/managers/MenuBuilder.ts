@@ -87,7 +87,7 @@ export class MenuBuilder {
             }
           },
           {
-            label: 'open devTools for WebView',
+            label: i18n.t('open devTools for WebView'),
             click() {
               const mainWindow = BrowserWindow.getFocusedWindow();
               if (mainWindow && !mainWindow.isDestroyed()) {
