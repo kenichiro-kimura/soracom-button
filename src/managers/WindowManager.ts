@@ -5,6 +5,16 @@ import { WireguardConfig } from '../arcConfig';
 import { IPC_CHANNELS } from '../constants';
 
 /**
+ * ウィンドウサイズの定数
+ */
+const WINDOW_SIZES = {
+  LARGE: { width: 1210, height: 700 },
+  MIDDLE: { width: 705, height: 350 },
+  SMALL: { width: 352, height: 250 },
+  WIREGUARD_CONFIG: { width: 600, height: 400 }
+};
+
+/**
  * ウィンドウ管理クラス
  */
 export class WindowManager {
@@ -20,8 +30,8 @@ export class WindowManager {
    */
   createMainWindow(): void {
     const options: BrowserWindowConstructorOptions = {
-      width: 1210,
-      height: 700,
+      width: WINDOW_SIZES.LARGE.width,
+      height: WINDOW_SIZES.LARGE.height,
       title: 'soracom button',
       webPreferences: {
         // セキュリティリスクを下げるためnodeIntegrationをfalseに設定
@@ -78,13 +88,13 @@ export class WindowManager {
 
     switch (size) {
       case 'large':
-        this.mainWindow.setBounds({ width: 1210, height: 700 });
+        this.mainWindow.setBounds(WINDOW_SIZES.LARGE);
         break;
       case 'middle':
-        this.mainWindow.setBounds({ width: 705, height: 350 });
+        this.mainWindow.setBounds(WINDOW_SIZES.MIDDLE);
         break;
       case 'small':
-        this.mainWindow.setBounds({ width: 352, height: 250 });
+        this.mainWindow.setBounds(WINDOW_SIZES.SMALL);
         break;
       default:
         size = 'large';
@@ -107,8 +117,8 @@ export class WindowManager {
    */
   openWireGuardConfigWindow(): void {
     let configWindow: BrowserWindow | null = new BrowserWindow({
-      width: 600,
-      height: 400,
+      width: WINDOW_SIZES.WIREGUARD_CONFIG.width,
+      height: WINDOW_SIZES.WIREGUARD_CONFIG.height,
       title: 'WireGuard Config',
       parent: this.mainWindow || undefined,
       modal: true,
