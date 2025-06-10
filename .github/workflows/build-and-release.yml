@@ -48,7 +48,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           mkdir -p tools
-          Invoke-WebRequest -Uri "https://github.com/vcsjones/AzureSignTool/releases/download/v4.0.1/AzureSignTool-x64.exe" -OutFile "tools/AzureSignTool-x64.exe"
+          Invoke-WebRequest -Uri "https://github.com/vcsjones/AzureSignTool/releases/download/v6.0.1/AzureSignTool-x64.exe" -OutFile "tools/AzureSignTool-x64.exe"
       
       - name: Build Electron App
         run: ${{ matrix.build_cmd }}
