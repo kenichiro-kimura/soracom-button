@@ -69,19 +69,11 @@
     },
     "mac": {
       "target": "dmg",
-      "icon": "img/icon.png",
-      "hardenedRuntime": true,
-      "gatekeeperAssess": false,
-      "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.plist"
+      "icon": "img/icon.png"
     },
     "win": {
       "target": "nsis",
-      "icon": "img/icon.png",
-      "signingHashAlgorithms": [
-        "sha256"
-      ],
-      "signDlls": true
+      "icon": "img/icon.png"
     },
     "nsis": {
       "oneClick": false,
