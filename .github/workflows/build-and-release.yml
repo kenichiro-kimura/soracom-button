@@ -60,7 +60,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           $distFolder = if ("${{ matrix.build_cmd }}" -eq "npm run publish-win64") { "dist/win-unpacked" } else { "dist/win-ia32-unpacked" }
-          tools/AzureSignTool-x64.exe sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_SIGNING_SECRET }}" -kvc "${{ secrets.AZURE_CERT_NAME }}" -tr http://timestamp.digicert.com -td "sha256" -fd "sha256" -ph -v "$distFolder/soracom-button*.exe"
+          tools/AzureSignTool-x64.exe sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_SIGNING_SECRET }}" -kvc "${{ secrets.AZURE_CERT_NAME }}" -tr http://timestamp.digicert.com -td "sha256" -fd "sha256" -ph -v "dist/soracom-button*.exe"
       
       # 署名済みファイルのリリース処理
       - name: Publish Release
