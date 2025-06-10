@@ -1,6 +1,6 @@
 {
   "name": "soracom-button",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "",
   "main": "dist/main.js",
   "dependencies": {
@@ -36,8 +36,8 @@
     "copy": "copyfiles -u 1 src/index.html src/config.html src/js/**/* src/css/**/* src/img/**/* src/languages/**/* dist/",
     "start": "npm run build && electron .",
     "publish-mac": "npm run build && electron-builder --mac --arm64 --publish always",
-    "publish-win64": "npm run build && electron-builder --win --x64 --publish always",
-    "publish-win32": "npm run build && electron-builder --win --ia32 --publish always",
+    "publish-win64": "npm run build && electron-builder --win --x64",
+    "publish-win32": "npm run build && electron-builder --win --ia32",
     "build-mac": "npm run build && electron-builder --mac --arm64",
     "build-win64": "npm run build && electron-builder --win --x64",
     "build-win32": "npm run build && electron-builder --win --ia32",
@@ -69,11 +69,19 @@
     },
     "mac": {
       "target": "dmg",
-      "icon": "img/icon.png"
+      "icon": "img/icon.png",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
     },
     "win": {
       "target": "nsis",
-      "icon": "img/icon.png"
+      "icon": "img/icon.png",
+      "signingHashAlgorithms": [
+        "sha256"
+      ],
+      "signDlls": true
     },
     "nsis": {
       "oneClick": false,

@@ -42,8 +42,41 @@ jobs:
           node-version: 22         
       - name: Install dependencies
         run: npm ci
-
-      - name: Build and release binaries
+      
+      # Azure Key Vault認証とツールのダウンロード (Windowsのみ)
+      - name: Azure Login
+        uses: azure/login@v1
+        if: matrix.os == 'windows-latest'
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      
+      - name: Download AzureSignTool
+        if: matrix.os == 'windows-latest'
+        run: |
+          mkdir -p tools
+          Invoke-WebRequest -Uri "https://github.com/vcsjones/AzureSignTool/releases/download/v4.0.1/AzureSignTool-x64.exe" -OutFile "tools/AzureSignTool-x64.exe"
+      
+      - name: Build Electron App
         run: ${{ matrix.build_cmd }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      # Windows向けビルドに署名
+      - name: Sign Windows executable
+        if: matrix.os == 'windows-latest'
+        run: |
+          $distFolder = if ("${{ matrix.build_cmd }}" -eq "npm run publish-win64") { "dist/win-unpacked" } else { "dist/win-ia32-unpacked" }
+          tools/AzureSignTool-x64.exe sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_SIGNING_SECRET }}" -kvc "${{ secrets.AZURE_CERT_NAME }}" -tr http://timestamp.digicert.com -td "sha256" -fd "sha256" -ph -v "$distFolder/soracom-button*.exe"
+      
+      # 署名済みファイルのリリース処理
+      - name: Publish Release
+        run: |
+          if ("${{ matrix.os }}" -eq "windows-latest") {
+            $arch = if ("${{ matrix.build_cmd }}" -eq "npm run publish-win64") { "x64" } else { "ia32" }
+            npx electron-builder --win --$arch --publish always
+          }
+        if: matrix.os == 'windows-latest'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
