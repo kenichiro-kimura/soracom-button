@@ -52,7 +52,8 @@ jobs:
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         run: |
           # Create temporary keychain
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          export KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> $GITHUB_ENV
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
@@ -67,6 +68,7 @@ jobs:
 
           # Verify certificate import
           security find-identity -v -p codesigning $KEYCHAIN_PATH
+
       
       # Download azure signing tool(Windows only)
       - name: Download AzureSignTool
@@ -83,6 +85,13 @@ jobs:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           
+      - name: Delete keychain
+        if: matrix.os == 'macos-latest'
+        run: |
+          security delete-keychain $KEYCHAIN_PATH
+        env:
+          KEYCHAIN_PATH: ${{ env.KEYCHAIN_PATH }}
+
       - name: Sign to a binary for Windows
         if: matrix.os == 'windows-latest'
         run: |
@@ -120,7 +129,6 @@ jobs:
           draft: true
           prerelease: false
           generate_release_notes: true
-          overwrite: true
           tag_name: ${{ env.RELEASE_TAG_NAME }}
           name: ${{ env.VERSION }}
         env:
