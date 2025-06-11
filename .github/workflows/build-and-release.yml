@@ -79,6 +79,9 @@ jobs:
         run: ${{ matrix.build_cmd }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}f
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           
       - name: Sign to a binary for Windows
         if: matrix.os == 'windows-latest'
@@ -121,8 +124,5 @@ jobs:
           tag_name: ${{ env.RELEASE_TAG_NAME }}
           name: ${{ env.VERSION }}
         env:
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           VERSION: ${{ env.VERSION }}
           RELEASE_TAG_NAME: ${{ env.RELEASE_TAG_NAME }}
