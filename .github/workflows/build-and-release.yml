@@ -121,5 +121,8 @@ jobs:
           tag_name: ${{ env.RELEASE_TAG_NAME }}
           name: ${{ env.VERSION }}
         env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           VERSION: ${{ env.VERSION }}
           RELEASE_TAG_NAME: ${{ env.RELEASE_TAG_NAME }}
