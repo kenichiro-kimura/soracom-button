@@ -69,7 +69,9 @@
     },
     "mac": {
       "target": "dmg",
-      "icon": "img/icon.png"
+      "icon": "img/icon.png",
+      "category": "public.app-category.developer-tools",
+      "notarize": true
     },
     "win": {
       "target": "nsis",
