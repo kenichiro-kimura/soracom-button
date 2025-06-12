@@ -97,6 +97,16 @@ jobs:
         run: |
           tools/AzureSignTool-x64.exe sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_SIGNING_SECRET }}" -kvc "${{ secrets.AZURE_CERT_NAME }}" -tr http://timestamp.digicert.com -td "sha256" -fd "sha256" -ph -v "dist/soracom-button*.exe"
       
+      - name: Create zip archive
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem -Path dist -Filter "soracom-button-*.exe"
+          foreach ($file in $files) {
+            $zipFile = $file.FullName -replace '\.exe$', '.zip'
+            Compress-Archive -Path $file.FullName -DestinationPath $zipFile
+          }
+
       # Get version from package.json
       - name: Get version
         id: get_version
@@ -125,7 +135,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/*.exe
+            dist/soracom-button*.zip
           draft: true
           prerelease: false
           generate_release_notes: true
