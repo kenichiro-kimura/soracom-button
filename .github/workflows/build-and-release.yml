@@ -111,10 +111,10 @@ jobs:
       - name: Get version
         id: get_version
         if: matrix.os == 'windows-latest'
-        shell: cmd
+        shell: pwsh
         run: |
-          for /f "delims=" %%v in ('node -p "require('./package.json').version"') do set VERSION=%%v
-          echo VERSION=%VERSION%>> %GITHUB_ENV%
+          $VERSION = node -p "require('./package.json').version"
+          echo "VERSION=$VERSION" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       # Get existing release tag_name
       - name: Get existing release tag_name
