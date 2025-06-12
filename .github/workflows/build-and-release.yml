@@ -136,6 +136,7 @@ jobs:
         with:
           files: |
             dist/soracom-button*.zip
+            dist/soracom-button*.exe
           draft: true
           prerelease: false
           generate_release_notes: true
