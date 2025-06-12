@@ -3,7 +3,7 @@
 This is a [SORACOM LTE-M Button for Enterprise](https://users.soracom.io/ja-jp/guides/iot-devices/lte-m-button-enterprise/) simulator application that works on Windows and Mac.
 ## How to install 
 
-Download and run the binary that matches your environment from the release page.
+Download and run the binary that matches your environment from the release page. If the Windows executable file can't be downloaded, you can download the ZIP file with the same name as an alternative.
 
 ##  How to build
 

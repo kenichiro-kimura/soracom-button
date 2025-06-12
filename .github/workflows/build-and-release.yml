@@ -43,7 +43,105 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build and release binaries
+      - name: Prepare for codesigning
+        if: matrix.os == 'macos-latest'
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_TEAM_ID }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # Create temporary keychain
+          export KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> $GITHUB_ENV
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          # Import certificate to keychain
+          echo -n "$APPLE_CERTIFICATE" | base64 --decode > $RUNNER_TEMP/certificate.p12
+          security import $RUNNER_TEMP/certificate.p12 -P "$APPLE_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+          # Enable codesigning from keychain
+          security set-key-partition-list -S "apple-tool:,apple:,codesign:" -s -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          # Verify certificate import
+          security find-identity -v -p codesigning $KEYCHAIN_PATH
+
+      
+      # Download azure signing tool(Windows only)
+      - name: Download AzureSignTool
+        if: matrix.os == 'windows-latest'
+        run: |
+          mkdir -p tools
+          Invoke-WebRequest -Uri "https://github.com/vcsjones/AzureSignTool/releases/download/v6.0.1/AzureSignTool-x64.exe" -OutFile "tools/AzureSignTool-x64.exe"
+      
+      - name: Build Electron App
         run: ${{ matrix.build_cmd }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          
+      - name: Delete keychain
+        if: matrix.os == 'macos-latest'
+        run: |
+          security delete-keychain $KEYCHAIN_PATH
+        env:
+          KEYCHAIN_PATH: ${{ env.KEYCHAIN_PATH }}
+
+      - name: Sign to a binary for Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          tools/AzureSignTool-x64.exe sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_SIGNING_SECRET }}" -kvc "${{ secrets.AZURE_CERT_NAME }}" -tr http://timestamp.digicert.com -td "sha256" -fd "sha256" -ph -v "dist/soracom-button*.exe"
+      
+      - name: Create zip archive
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem -Path dist -Filter "soracom-button-*.exe"
+          foreach ($file in $files) {
+            $zipFile = $file.FullName -replace '\.exe$', '.zip'
+            Compress-Archive -Path $file.FullName -DestinationPath $zipFile
+          }
+
+      # Get version from package.json
+      - name: Get version
+        id: get_version
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          $VERSION = node -p "require('./package.json').version"
+          echo "VERSION=$VERSION" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      # Get existing release tag_name
+      - name: Get existing release tag_name
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          $release = gh release list --limit 100 --json tagName,name | ConvertFrom-Json | Where-Object { $_.name -eq "$env:VERSION" }
+          if ($release) {
+            echo "RELEASE_TAG_NAME=$($release.tagName)" | Out-File -FilePath $env:GITHUB_ENV -Append
+          }
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ env.VERSION }}
+
+      # Publish signed binary (only Windows)
+      - name: Upload Release Asset
+        if: matrix.os == 'windows-latest'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/soracom-button*.zip
+            dist/soracom-button*.exe
+          draft: true
+          prerelease: false
+          generate_release_notes: true
+          tag_name: ${{ env.RELEASE_TAG_NAME }}
+          name: ${{ env.VERSION }}
+        env:
+          VERSION: ${{ env.VERSION }}
+          RELEASE_TAG_NAME: ${{ env.RELEASE_TAG_NAME }}
