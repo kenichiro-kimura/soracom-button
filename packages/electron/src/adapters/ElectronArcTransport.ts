@@ -2,13 +2,13 @@
  * Electron用のArcトランスポートアダプター (libsoratun)
  */
 import { load, DataType } from 'node-ffi-rs';
-import { ArcTransport, WireguardConfig } from '@soracom-button/core';
+import { ArcTransport, WireguardConfig as CoreWireguardConfig } from '@soracom-button/core';
 import { LibSoratunLoader } from '../utils/LibSoratunLoader';
-import { ArcConfig } from '../arcConfig';
+import { ArcConfig, WireguardConfig } from '../arcConfig';
 
 export class ElectronArcTransport implements ArcTransport {
   private libSoratun: LibSoratunLoader;
-  private wireguardConfig?: WireguardConfig;
+  private wireguardConfig?: CoreWireguardConfig;
   private logLevel = 0;
 
   constructor(libSoratun: LibSoratunLoader) {
@@ -24,7 +24,16 @@ export class ElectronArcTransport implements ArcTransport {
       throw new Error('Arc transport not available or not configured');
     }
 
-    const arcConfig = ArcConfig.fromWireguardConfig(this.wireguardConfig)
+    // CoreWireguardConfigをElectronWireguardConfigに変換
+    const electronWireguardConfig = new WireguardConfig(
+      this.wireguardConfig.privateKey,
+      this.wireguardConfig.serverPeerPublicKey,
+      this.wireguardConfig.serverEndpoint,
+      this.wireguardConfig.allowedIPs,
+      this.wireguardConfig.clientPeerIpAddress
+    );
+
+    const arcConfig = ArcConfig.fromWireguardConfig(electronWireguardConfig)
       .setLogLevel(this.logLevel);
 
     const result = load({
@@ -38,7 +47,7 @@ export class ElectronArcTransport implements ArcTransport {
     return result;
   }
 
-  setWireguardConfig(config: WireguardConfig): void {
+  setWireguardConfig(config: CoreWireguardConfig): void {
     this.wireguardConfig = config;
   }
 

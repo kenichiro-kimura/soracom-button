@@ -1,6 +1,8 @@
 import Store from 'electron-store';
 import { WireguardConfig, ArcConfig } from '../arcConfig';
 import i18n from '../i18n';
+import { app } from 'electron';
+import path from 'path';
 
 /**
  * 設定の型定義
