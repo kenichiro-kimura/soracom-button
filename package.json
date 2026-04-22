@@ -7,7 +7,7 @@
     "axios": "^1.8.4",
     "electron-store": "^8.2.0",
     "i18next": "^25.0.1",
-    "i18next-fs-backend": "^2.6.0",
+    "i18next-fs-backend": "^2.6.4",
     "node-ffi-rs": "^1.2.10",
     "path": "^0.12.7"
   },
