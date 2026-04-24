@@ -1,0 +1,85 @@
+{
+  "name": "@soracom-button/electron",
+  "version": "0.7.2",
+  "description": "SORACOM LTE-M Button for Enterprise Simulator - Electron Desktop Application",
+  "main": "dist/src/main.js",
+  "dependencies": {
+    "@soracom-button/core": "^0.1.0",
+    "axios": "^1.8.4",
+    "electron-store": "^8.2.0",
+    "i18next": "^25.0.1",
+    "i18next-fs-backend": "^2.6.0",
+    "node-ffi-rs": "^1.2.10",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "@types/electron": "^1.4.38",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.15.1",
+    "@typescript-eslint/eslint-plugin": "^8.31.0",
+    "@typescript-eslint/parser": "^8.31.0",
+    "copyfiles": "^2.4.1",
+    "electron": "^35.2.1",
+    "electron-builder": "^26.0.13",
+    "eslint": "^8.13.0",
+    "eslint-config-semistandard": "^17.0.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.3.2",
+    "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "build": "tsc && npm run copy",
+    "copy": "copyfiles -u 1 src/index.html src/config.html src/js/**/* src/css/**/* src/img/**/* src/languages/**/* dist/src/",
+    "start": "npm run build && electron .",
+    "publish-mac": "npm run build && electron-builder --mac --arm64 --publish always",
+    "publish-win64": "npm run build && electron-builder --win --x64 --publish never",
+    "publish-win32": "npm run build && electron-builder --win --ia32 --publish never",
+    "build-mac": "npm run build && electron-builder --mac --arm64",
+    "build-win64": "npm run build && electron-builder --win --x64",
+    "build-win32": "npm run build && electron-builder --win --ia32",
+    "lint": "eslint --ext .ts ./src ./tests",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "author": "Kenichiro Kimura <kenichiro.kimura@gmail.com>",
+  "license": "MIT",
+  "build": {
+    "asar": true,
+    "asarUnpack": [
+      "dist/libsoratun.*"
+    ],
+    "appId": "jp.soracom-ug.app.button",
+    "files": [
+      "package.json",
+      "package-lock.json",
+      "src",
+      "dist"
+    ],
+    "publish": {
+      "provider": "github",
+      "owner": "kenichiro-kimura",
+      "repo": "soracom-button",
+      "releaseType": "draft",
+      "publishAutoUpdate": false
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "../../img/icon.png",
+      "category": "public.app-category.developer-tools",
+      "notarize": true
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "../../img/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "${productName}-win-${arch}-${version}-setup.${ext}"
+    }
+  }
+}

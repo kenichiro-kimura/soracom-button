@@ -1,114 +1,248 @@
 # SORACOM LTE-M Button for Enterprise Simulator
 
-This is a [SORACOM LTE-M Button for Enterprise](https://users.soracom.io/ja-jp/guides/iot-devices/lte-m-button-enterprise/) simulator application that works on Windows and Mac.
-## How to install 
+A multi-platform SORACOM LTE-M Button for Enterprise simulator that works on Windows, Mac, Android, and iOS. This project demonstrates how to build cross-platform applications with maximum code sharing between Electron (desktop) and React Native (mobile) platforms.
 
-Download and run the binary that matches your environment from the release page. If the Windows executable file can't be downloaded, you can download the ZIP file with the same name as an alternative.
+## Architecture Overview
 
-##  How to build
+This project uses a **monorepo structure with shared business logic** to maximize code reuse across platforms:
 
-Clone the complete source tree.
+```
+packages/
+├── core/           # Shared business logic library (@soracom-button/core)
+├── electron/       # Desktop application (Windows, Mac, Linux)
+└── mobile/         # Mobile application (Android, iOS)
+```
 
-Install Node.js and execute the following command.
+### Shared Core Library (`@soracom-button/core`)
+
+The core library contains **platform-agnostic business logic** shared between desktop and mobile apps:
+
+- **SORACOM API Communication**: HTTP/UDP data transmission logic
+- **Configuration Management**: Settings and WireGuard configuration handling
+- **Button Interaction Logic**: Click detection, timing, and event management
+- **Internationalization**: Multi-language support (7 languages)
+- **Type Definitions**: Shared TypeScript interfaces and enums
+- **Business Logic**: Battery management, transmission state handling
+
+### Platform-Specific Implementations
+
+Each platform provides adapters that implement the core library's abstract interfaces:
+
+#### Electron Desktop App
+- **Storage**: `electron-store` for persistent configuration
+- **UDP Transport**: Node.js `dgram` module
+- **SORACOM Arc**: `libsoratun` native library integration
+- **UI**: HTML/CSS/JavaScript with Electron renderer
+
+#### React Native Mobile App
+- **Storage**: `AsyncStorage` for configuration persistence
+- **UDP Transport**: `react-native-udp` for network communication
+- **Haptic Feedback**: Native vibration and haptic patterns
+- **UI**: Native mobile components optimized for touch interaction
+
+## Features
+
+### Core Functionality
+- ✅ **Button Simulation**: Single click, double click, long press (1s+)
+- ✅ **SORACOM Integration**: Data transmission to SORACOM Harvest
+- ✅ **WireGuard Support**: SORACOM Arc Integration via WireGuard
+- ✅ **Multi-language**: English, Japanese, Chinese, Korean, Spanish, German, French
+- ✅ **Battery Simulation**: Configurable battery levels (0.25V - 1.0V)
+- ✅ **Visual Feedback**: LED status indicators with color-coded states
+
+### Platform-Specific Features
+
+#### Desktop (Electron)
+- Native desktop window management
+- System menu integration
+- File-based WireGuard configuration
+- libsoratun integration for enhanced security
+- Keyboard shortcuts
+
+#### Mobile (React Native)
+- Native touch interaction with haptic feedback
+- Device-optimized UI scaling
+- Background task support
+- Platform-specific design guidelines
+- Mobile-optimized configuration screens
+
+## Getting Started
+
+### Prerequisites
+
+- **Node.js 18+**
+- **Desktop Development**: Electron build tools
+- **Mobile Development**: React Native environment setup
+  - Android: Android Studio
+  - iOS: Xcode (macOS only)
+
+### Installation
+
+1. **Clone and install dependencies**:
+```bash
+git clone https://github.com/kenichiro-kimura/soracom-button.git
+cd soracom-button
+npm install
+```
+
+2. **Build the shared core library**:
+```bash
+npm run build:core
+```
+
+### Running Applications
+
+#### Desktop Application
+```bash
+# Development
+npm start
+
+# Build for distribution
+npm run build-mac      # macOS
+npm run build-win64    # Windows 64-bit
+npm run build-win32    # Windows 32-bit
+```
+
+#### Mobile Application
+```bash
+# Start development server
+npm run start:mobile
+
+# Run on Android
+npm run android
+
+# Run on iOS (macOS only)
+npm run ios
+```
+
+### Development Commands
 
 ```bash
-% npm install
-% npm run build-win64
+# Build all packages
+npm run build
+
+# Run all tests
+npm test
+
+# Lint all packages
+npm run lint
+
+# Package-specific commands
+npm run build:core       # Build shared library
+npm run test:electron    # Test desktop app
+npm run lint:mobile      # Lint mobile app
 ```
 
-For Windows(32bit),use `npm run build-win32`, and for Mac, use`npm run build-mac`
+## SORACOM Setup
 
-Executable files will be created under the `dist` folder.
+### Prerequisites
+1. **SORACOM Account**: Create account at [SORACOM Console](https://console.soracom.io)
+2. **SORACOM Harvest**: Enable data collection service
+3. **Network Access**: Ensure device can reach SORACOM platform
 
-If you want to use SORACOM Arc Integration with libsoratun, build [libsoratun](https://github.com/kenichiro-kimura/libsoratun) and copy `lib/shared/libsoratun.*` to the `dist` folder, then rebuild this project.
+### Option 1: SORACOM Arc Integration (Recommended)
 
-## How to use
+The app supports SORACOM Arc Integration for secure WireGuard-based connectivity:
 
-### Preparing for SORACOM
+1. **Create SORACOM Arc Virtual SIM**
+2. **Download WireGuard Configuration**
+3. **Configure in App**:
+   - Desktop: `File > WireGuard config`
+   - Mobile: Settings screen
+4. **Paste WireGuard config directly** - no additional setup required
 
-By using the SORACOM Arc Integration feature, you can send data to the SORACOM platform with just this application, without needing to use WireGuard or other tools separately.  
-Obtain the WireGuard configuration of an existing or newly created SORACOM Arc virtual SIM, open the settings screen from the [File] > [WireGuard config] menu, paste the configuration as is, and press [OK].  
-Alternatively, after launching the application once, open the generated `config.json` file and add the following settings:
+### Option 2: Direct Network Access
 
-```json
-{
-  ....
-  "privateKey": "YOUR-PRIVATE-KEY",
-  "logLevel": 0,
-  "serverPeerPublicKey": "YOUR-SERVER-PUBLIC-KEY",
-  "serverEndpoint": "xxxx.arc.soracom.io:11010",
-  "allowedIPs": [
-    "100.127.0.0/21",
-    ....
-  ],,
-  "clientPeerIpAddress": "YOUR-CLIENT-PEER-IP-ADDRESS"
-}
-```
+If Arc Integration is unavailable:
+1. **Connect device to SORACOM Air** or existing **SORACOM Arc setup**
+2. **Ensure network connectivity** to `button.soracom.io:23080`
+3. **Enable SORACOM Harvest** in your SIM group
 
-The `config.json` file will be created in `%APPDATA%\soracom-button` on Windows, and in `~/Library/Application Support/soracom-button` on Mac.
+### Verification
 
-If you do not use (or cannot use) the SORACOM Arc Integration feature, please make sure that the PC running this application can access the SORACOM platform using SORACOM Air or SORACOM Arc.
+1. **Send test data** using the button interface
+2. **Check SORACOM Console** > Data Collection > SORACOM Harvest Data
+3. **Verify data arrival** with correct click type and battery level
 
-Also, make sure that SORACOM Harvest is enabled in the SIM group to which the SIM used for the connection belongs in order to check the incoming data.
+## Usage
 
-Reference:
-- [Connection Guides](https://developers.soracom.io/en/start/#connection-guides)
-- [SORACOM Arc](https://developers.soracom.io/en/docs/arc/)
-- [SORACOM Harvest](https://developers.soracom.io/en/docs/harvest/)
+### Basic Operation
 
-### Startup
+1. **Start Application** (desktop or mobile)
+2. **Configure Battery Level** using the dropdown/picker
+3. **Interact with Button**:
+   - **Single Tap/Click**: Quick press and release
+   - **Double Tap/Click**: Two quick presses within 300ms
+   - **Long Press**: Hold for 1+ seconds then release
+4. **Monitor Status**: Watch LED indicator and status messages
+5. **Verify Data**: Check SORACOM Harvest for transmitted data
 
-When you start the software, the main window will open as shown below.
+### Visual Feedback
 
-![](img/app-image.png)
+- **LED Indicator**:
+  - 🔴 **Red**: Transmission successful
+  - 🟢 **Green**: Transmission failed  
+  - 🟠 **Orange (blinking)**: Transmission in progress
+  - ⚫ **Off**: Idle state
 
-### Quit
-Select [File] > [Exit] menu.
+- **Status Messages**:
+  - **"SENDING"**: Data transmission in progress
+  - **"SUCCESS"**: Data transmitted successfully
+  - **"FAILED"**: Transmission error occurred
 
-### Send data.
+## Development
 
-- Click the button (big circle on the left).
-- As with the LTE-M Button, you can single click, double click, or long click.
-- To long click, press the button for more than 1 second, and then release the mouse button (Unlike LTE-M Button, it does not work if the button is left pressed.)
+### Code Sharing Strategy
 
-When you click the button, you will see "(SINGLE/DOUBLE/LONG) SENDING" in the "Transmission Status" section at the bottom left, and the LED (small circle on the right) will blink orange.
+The project achieves **~80% code sharing** through:
 
-It takes about 5 seconds to complete the transmission, depending on the network condition, and the LED will turn red if the transmission is successful or green if it fails. If the transmission is successful, the LED will turn red; if it fails, the LED will turn green, and the result will be displayed in the "Transmission Status" section as "Transmission Complete (Success/Failure)".
+1. **Business Logic Abstraction**: All SORACOM-specific logic in core library
+2. **Interface-Based Design**: Platform adapters implement standard interfaces
+3. **Dependency Injection**: Platform-specific implementations injected at runtime
+4. **Shared Types**: Common TypeScript definitions across all packages
 
-### Check the data.
+### Adding New Features
 
-From the [SORACOM User Console](https://console.soracom.io), go to [Data Collection, Storage, and Visualization] > [SORACOM Harvest Data] to check the data.
+1. **Core Logic**: Add to `packages/core/src/` if platform-agnostic
+2. **Platform Adapters**: Implement platform-specific interfaces
+3. **UI Components**: Create platform-appropriate user interfaces
+4. **Tests**: Add unit tests for core logic and integration tests
 
-### Change the display language
+### Architecture Benefits
 
-Select [View] > [language]. The supported languages are as follows.
+- **Maintainability**: Single source of truth for business logic
+- **Consistency**: Identical behavior across platforms
+- **Efficiency**: Parallel development for different platforms
+- **Quality**: Shared tests ensure consistent functionality
 
-- English
-- Japanese
-- Chinese (Simplified)
-- Korean
-- Spanish
-- Deutsch
-- French
+## Contributing
 
-The default is English. Also, since machine translation is used for translation, the translation may not be accurate.
+1. **Fork the repository**
+2. **Create feature branch**: `git checkout -b feature/amazing-feature`
+3. **Commit changes**: `git commit -m 'Add amazing feature'`
+4. **Push to branch**: `git push origin feature/amazing-feature`
+5. **Open Pull Request**
 
-### Change the look and feel.
+### Development Standards
 
-Select [View] > [Sticker] > [UG Version] to change the button to the version with the SORACOM UG sticker on it. The behavior will not change.
+- **TypeScript**: Strict type checking enabled
+- **ESLint**: Code style and quality enforcement
+- **Jest**: Unit and integration testing
+- **Conventional Commits**: Standardized commit messages
 
-Select [View] > [Size] > [Large/Middle/Smaill] to change the size of button.
+## License
 
-![](img/app-image-ug.png)
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgements
+## Acknowledgments
 
-I would like to express our deepest gratitude to [0x6b](https://github.com/0x6b/), the developer of the libsoratun library, for making SORACOM Arc Integration possible.  
-Thanks to this library, it became easy and secure to connect to SORACOM Arc from the application.  
-We sincerely appreciate your contribution.
+- **[SORACOM](https://soracom.io/)**: For the excellent IoT platform and LTE-M Button hardware
+- **[0x6b](https://github.com/0x6b/)**: Developer of libsoratun library enabling SORACOM Arc Integration
+- **SORACOM User Group**: Community feedback and feature suggestions
 
-## Contact us
+## Support
 
-If you tweet on Twitter with the hashtag `#soracomug`, the author or some member from SORACOM UserGroup will probably respond, but it's best effort, so please be patient for the answer.
-
-If you want to improve a feature, please create an issue or send us a pull request.
+- **Documentation**: Check the README files in each package directory
+- **Issues**: Report bugs via [GitHub Issues](https://github.com/kenichiro-kimura/soracom-button/issues)
+- **Community**: Reach out with hashtag `#soracomug` on social media
+- **SORACOM Support**: For platform-specific questions, contact SORACOM support
