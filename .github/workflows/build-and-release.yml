@@ -20,13 +20,12 @@ jobs:
             build_cmd: npm run publish-mac
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           repository: kenichiro-kimura/libsoratun
           path: libsoratun 
       - name: Set up go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
           go-version: 1.24.2
       - name: build libsoratun
@@ -37,7 +36,7 @@ jobs:
           mkdir dist
           cp libsoratun/lib/shared/libsoratun.* dist/
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version: 22         
       - name: Install dependencies
@@ -132,7 +131,7 @@ jobs:
       # Publish signed binary (only Windows)
       - name: Upload Release Asset
         if: matrix.os == 'windows-latest'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda
         with:
           files: |
             dist/soracom-button*.zip
